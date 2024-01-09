@@ -8,3 +8,6 @@ run: build
 
 clean:
 	@rm -f bin/$(BINARY_NAME)
+
+tailwind:
+	npx tailwindcss -i static/input.css -o static/output_prod_styles.css --watch
