@@ -1,0 +1,62 @@
+package templates
+
+templ LoginPage() {
+	<div class="flex flex-col justify-center items-center">
+		<div class="py-3">
+			<p id="message"></p>
+			<form action="/loginUser" method="post" class="p-2 flex flex-col justify-center items-center gap-4">
+				<h1 class="text-2xl font-bold">Welcome!</h1>
+				<p>
+					Enter Your Email to Login
+				</p>
+				<input
+ 					type="text"
+ 					class="border-2 border-neutral-600 p-1 rounded-md"
+ 					autocomplete="off"
+ 					name="email"
+ 					placeholder="Email"
+ 					id="email"
+				/>
+				<button
+ 					class="bg-black text-white p-2 w-2/4 font-semibold rounded-md"
+ 					type="submit"
+				>
+					🔓️Login
+				</button>
+			</form>
+		</div>
+	</div>
+}
+
+templ OtpLogin(otp_id string) {
+	<div class="flex flex-col justify-center items-center">
+		<div class="py-3">
+			<p id="message"></p>
+			<form action="/checkOtp" method="post" class="p-2 flex flex-col justify-center items-center gap-4">
+				<h1 class="text-2xl font-bold">Verify that it's you!</h1>
+				<p>
+					Enter Your OTP to Login
+				</p>
+				<input
+ 					type="text"
+ 					class="border-2 border-neutral-600 p-1 rounded-md"
+ 					autocomplete="off"
+ 					name="otp"
+ 					placeholder="OTP"
+ 					id="otp"
+				/>
+				<input
+ 					type="hidden"
+ 					name="otp_id"
+ 					value={ otp_id }
+				/>
+				<button
+ 					class="bg-black text-white p-2 w-2/4 font-semibold rounded-md"
+ 					type="submit"
+				>
+					🥹 It is me!
+				</button>
+			</form>
+		</div>
+	</div>
+}

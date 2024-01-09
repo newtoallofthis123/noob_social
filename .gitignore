@@ -1,0 +1,23 @@
+# All files ending with _templ.go
+*_templ.go
+
+# Binary files
+/bin/*
+
+# Production files
+*_prod_*
+
+# Vscode
+/.vscode
+
+# SQL Session File
+noob_social.session.sql
+
+# HTML
+test.html
+
+# Node Modules
+node_modules
+
+# Env
+.env

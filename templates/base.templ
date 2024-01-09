@@ -1,0 +1,50 @@
+package templates
+
+templ Base(title string, body templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@Header(title)
+		@Nav(title, false)
+		<body class="dark:bg-neutral-900 dark:text-neutral-200">
+			@body
+		</body>
+		<script>
+			let root = document.documentElement
+
+			localStorage.getItem("theme") === "dark" ? root.classList.add("dark") : root.classList.remove("dark")
+
+			if (localStorage.getItem("theme") === null) {
+				let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+				localStorage.setItem("theme", theme)
+			}
+		</script>
+	</html>
+}
+
+templ Raw(title string, body templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@Header(title)
+		<body>
+			@body
+		</body>
+	</html>
+}
+
+templ Protected(title string, body templ.Component) {
+	@Base(title, body)
+	<script>
+		authRes = fetch("/checkSession").then(res => {if(res.status !== 200) {
+        window.location.href = "/login"
+    	}})
+	</script>
+}
+
+templ AntiProtected(title string, body templ.Component) {
+	@Base(title, body)
+	<script>
+		authRes = fetch("/checkSession").then(res => {if(res.status === 200) {
+		window.location.href = "/"
+		}})
+	</script>
+}
