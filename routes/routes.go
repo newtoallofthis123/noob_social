@@ -49,11 +49,14 @@ func (api *ApiServer) Start() error {
 
 	r.GET("/login", api.handleLoginPage)
 	r.GET("/otp-login", api.handleOtpPage)
+	r.GET("/sign-up", api.handleSignUpPage)
 
 	r.POST("/loginUser", api.handleEmailLogin)
 	r.POST("/checkOtp", api.handleOtpLogin)
+	r.POST("/signUpUser", api.handleUserSignUp)
 
 	r.GET("/checkSession", api.handleAuthCheck)
+	r.POST("/logout", api.handleSignOut)
 
 	err := r.Run(api.listenAddr)
 	return err

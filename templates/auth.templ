@@ -11,7 +11,7 @@ templ LoginPage() {
 				</p>
 				<input
  					type="text"
- 					class="border-2 border-neutral-600 p-1 rounded-md"
+ 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
  					autocomplete="off"
  					name="email"
  					placeholder="Email"
@@ -39,7 +39,7 @@ templ OtpLogin(otp_id string) {
 				</p>
 				<input
  					type="text"
- 					class="border-2 border-neutral-600 p-1 rounded-md"
+ 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
  					autocomplete="off"
  					name="otp"
  					placeholder="OTP"
@@ -55,6 +55,46 @@ templ OtpLogin(otp_id string) {
  					type="submit"
 				>
 					🥹 It is me!
+				</button>
+			</form>
+		</div>
+	</div>
+}
+
+templ SignUpPage(email string) {
+	<div class="flex flex-col justify-center items-center">
+		<div class="py-3">
+			<p id="message"></p>
+			<form action="/signUpUser" method="post" class="p-2 flex flex-col justify-center items-center gap-4">
+				<h1 class="text-2xl font-bold">Welcome To NoobSocial!</h1>
+				<p>
+					Enter Your Email
+				</p>
+				<input
+ 					type="text"
+ 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+ 					autocomplete="off"
+ 					name="email"
+ 					value={ email }
+ 					placeholder="Email"
+ 					id="email"
+				/>
+				<p>
+					Choose a cool username
+				</p>
+				<input
+ 					type="text"
+ 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+ 					autocomplete="off"
+ 					name="username"
+ 					placeholder="Username"
+ 					id="username"
+				/>
+				<button
+ 					class="bg-black text-white p-2 w-2/4 font-semibold rounded-md"
+ 					type="submit"
+				>
+					SignUp
 				</button>
 			</form>
 		</div>

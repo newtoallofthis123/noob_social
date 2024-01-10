@@ -28,6 +28,13 @@ For the backend, just open the terminal and run `make run`. This will start the 
 
 On the other terminal, use `make tailwind` to start the tailwind compilation. This will watch the `tailwind.css` file and will automatically compile it to `/static/output_prod_styles.css` when you make changes.
 
+## Check List
+
+- [x] Basic Backend
+- [x] Authentication
+- [ ] Post Creation Frontend
+- [ ] Post Management Frontend
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

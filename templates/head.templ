@@ -42,9 +42,9 @@ templ Nav(title string, about bool) {
 					</a>
 				</p>
 				<p id="signout" class="p-2">
-					<a href="/signout">
+					<span hx-post="/logout" id="logout" hx-target="#signout" class="cursor-pointer">
 						😞 SignOut
-					</a>
+					</span>
 				</p>
 				<p class="p-2">
 					<a href="/about">
@@ -60,6 +60,12 @@ templ Nav(title string, about bool) {
 				document.getElementById("notAuth").classList.add("hidden")
 				document.getElementById("auth").classList.remove("hidden")
 				document.getElementById("auth").classList.add("flex")
+			}
+		})
+
+		document.getElementById("logout").addEventListener('htmx:afterRequest', (dlt) => {
+			if(dlt.detail.successful){
+				window.location.href = "/login"
 			}
 		})
 	</script>

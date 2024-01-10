@@ -22,3 +22,7 @@ func (api *ApiServer) handleOtpPage(c *gin.Context) {
 func (api *ApiServer) handleHomePage(c *gin.Context) {
 	templates.Protected("NoobSocial | Home", templates.Home()).Render(c.Request.Context(), c.Writer)
 }
+
+func (api *ApiServer) handleSignUpPage(c *gin.Context) {
+	templates.AntiProtected("Sign Up", templates.SignUpPage(c.Query("email"))).Render(c.Request.Context(), c.Writer)
+}

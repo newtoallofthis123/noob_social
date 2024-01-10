@@ -17,3 +17,9 @@ func generate(length int, pool string) string {
 
 	return otp
 }
+
+func GenerateRandomString(len int) string {
+	pool := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+	return generate(len, pool)
+}

@@ -19,6 +19,7 @@ type Store interface {
 	DeleteOtp(userId string) error
 	GetUserById(userId string) (views.User, error)
 	GetSessionById(sessionId string) (views.Session, error)
+	DeleteSession(sessionId string) error
 }
 
 type PqInstance struct {

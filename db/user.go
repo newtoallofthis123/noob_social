@@ -165,3 +165,15 @@ func (pq *PqInstance) GetSessionById(sessionId string) (views.Session, error) {
 
 	return session, nil
 }
+
+func (pq *PqInstance) DeleteSession(sessionId string) error {
+	query := pq.Builder.Delete("sessions").Where(squirrel.Eq{"id": sessionId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	_, err := query.Exec()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
