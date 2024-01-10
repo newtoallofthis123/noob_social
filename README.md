@@ -1,5 +1,7 @@
 # NoobSocial
 
+[![wakatime](https://wakatime.com/badge/user/7bd238cb-c7ea-4e56-abe2-0b6ae36ff252/project/018b7110-76e1-42c4-8efc-b616eb7f6a4b.svg)](https://wakatime.com/badge/user/7bd238cb-c7ea-4e56-abe2-0b6ae36ff252/project/018b7110-76e1-42c4-8efc-b616eb7f6a4b)
+
 The Social Network that aims to be a self hosted network for just you and your friends.
 
 No Algorithms, No Ads, No BS.
