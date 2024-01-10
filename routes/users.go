@@ -96,7 +96,7 @@ func (api *ApiServer) handleOtpLogin(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("session_id", sessionId, 3600, "/", "localhost", false, true)
+	c.SetCookie("session_id", sessionId, 60*60*12, "/", "localhost", false, true)
 
 	err = api.store.DeleteOtp(otpId)
 	if err != nil {

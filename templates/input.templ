@@ -1,0 +1,61 @@
+package templates
+
+templ CreatePostInput(username string) {
+	<div class="flex flex-col justify-center items-start px-0.5 gap-y-3">
+		<div class="w-full p-0.5 flex flex-row justify-center items-center">
+			<div class="w-1/6">
+				<img src={ "https://i.pravatar.cc/300" } class="w-12 h-10 pr-2 rounded-xl" alt=""/>
+			</div>
+			<div class="w-4/6 text-neutral-100">
+				<h3>
+					{ "@" }{ username }
+				</h3>
+				<p class="text-neutral-200 text-sm">
+					Logged in and ready!
+				</p>
+			</div>
+			<div class="w-1/6">
+				<button><i class="w-10 bi bi-list"></i></button>
+			</div>
+		</div>
+		<div class="border-2 border-gray-300 rounded-md">
+			<textarea
+ 				class="focus:outline-none focus:ring-0 rounded-md text-base p-2 text-neutral-900 dark:text-neutral-100 dark:bg-neutral-900"
+ 				name="content"
+ 				id="content"
+ 				cols="30"
+ 				placeholder="Write whatever you want here..."
+ 				oninput="onWriting(this)"
+ 				rows="7"
+			></textarea>
+			<div class="dark:bg-neutral-300 dark:text-neutral-900 rounded-b-sm">
+				<div class="flex flex-row justify-between items-center">
+					<div>
+						<button class="rounded-md">
+							<i class="bi bi-paperclip"></i>
+						</button>
+					</div>
+					<div></div>
+				</div>
+			</div>
+		</div>
+		<div class="flex flex-row w-full justify-between items-center">
+			<div class="w-3/5"></div>
+			<button
+ 				hx-post="/create_post"
+ 				hx-target="#posts"
+ 				hx-swap="afterbegin"
+ 				hx-trigger="submit, click"
+ 				class="dark:bg-neutral-100 mt-2 dark:text-black bg-neutral-800 text-white text-lg px-3 py-1 rounded-md"
+ 				type="submit"
+			>Post!</button>
+		</div>
+	</div>
+	<script>
+
+    const onWriting = (ele) => {
+        ele.style.height = 'auto'
+        ele.style.height = (ele.scrollHeight) + 'px'
+    }
+</script>
+}

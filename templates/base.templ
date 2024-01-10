@@ -6,7 +6,11 @@ templ Base(title string, body templ.Component) {
 		@Header(title)
 		@Nav(title, false)
 		<body class="dark:bg-neutral-900 dark:text-neutral-200">
-			@body
+			<div class="flex flex-col justify-center items-center">
+				<div class="w-[85%]">
+					@body
+				</div>
+			</div>
 		</body>
 		<script>
 			let root = document.documentElement
@@ -31,8 +35,8 @@ templ Raw(title string, body templ.Component) {
 	</html>
 }
 
-templ Protected(title string, body templ.Component) {
-	@Base(title, body)
+templ Protected(body templ.Component) {
+	@body
 	<script>
 		authRes = fetch("/checkSession").then(res => {if(res.status !== 200) {
         window.location.href = "/login"
@@ -47,4 +51,22 @@ templ AntiProtected(title string, body templ.Component) {
 		window.location.href = "/"
 		}})
 	</script>
+}
+
+templ AppLayout(title,username string, body templ.Component) {
+	@Base(title, AppLayoutIndex(username, body))
+}
+
+templ AppLayoutIndex(username string, body templ.Component) {
+	<div class="flex flex-between flex-row">
+		<div class="w-[27%]">
+			<div class="px-10 flex justify-center items-center">
+				@CreatePostInput(username)
+			</div>
+		</div>
+		<div class="w-[45%] bg-red-300">
+			@body
+		</div>
+		<div class="w-[28%] bg-green-300"></div>
+	</div>
 }
