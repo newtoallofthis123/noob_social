@@ -36,17 +36,17 @@ func createTables(refresh bool, db *PqInstance) error {
 	);
 
 	CREATE TABLE IF NOT EXISTS posts (
-		id UUID PRIMARY KEY,
+		id TEXT PRIMARY KEY,
 		author UUID REFERENCES users(id),
 		content UUID REFERENCES contents(id),
-		comment_to UUID REFERENCES posts(id),
+		comment_to TEXT REFERENCES posts(id),
 		created_at TIMESTAMP NOT NULL
 	); 
 
 	CREATE TABLE IF NOT EXISTS likes (
 		id UUID PRIMARY KEY,
 		user_id UUID REFERENCES users(id),
-		post_id UUID REFERENCES posts(id),
+		post_id TEXT REFERENCES posts(id),
 		created_at TIMESTAMP NOT NULL
 	);
 	`

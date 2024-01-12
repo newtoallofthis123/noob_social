@@ -58,6 +58,14 @@ func (api *ApiServer) Start() error {
 	r.GET("/checkSession", api.handleAuthCheck)
 	r.POST("/logout", api.handleSignOut)
 
+	// authenticated routes
+	auth := r.Group("/")
+	auth.Use(api.authMiddleware())
+
+	auth.POST("/createPost", api.handleCreatePost)
+
+	r.GET("/:username/post/:iden", api.handlePostPage)
+
 	err := r.Run(api.listenAddr)
 	return err
 }
