@@ -25,21 +25,21 @@ func (api *ApiServer) handleHomePage(c *gin.Context) {
 	sessionId, err := c.Cookie("session_id")
 	if err != nil {
 		fmt.Println(err)
-		c.Redirect(302, "/v")
+		c.Redirect(302, "/login")
 		return
 	}
 
 	session, err := api.store.GetSessionById(sessionId)
 	if err != nil {
 		fmt.Println(err)
-		c.Redirect(302, "/v")
+		c.Redirect(302, "/login")
 		return
 	}
 
 	user, err := api.store.GetUserById(session.UserId)
 	if err != nil {
 		fmt.Println(err)
-		c.Redirect(302, "/v")
+		c.Redirect(302, "/login")
 		return
 	}
 

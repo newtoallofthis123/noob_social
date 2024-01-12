@@ -20,6 +20,11 @@ type Store interface {
 	GetUserById(userId string) (views.User, error)
 	GetSessionById(sessionId string) (views.Session, error)
 	DeleteSession(sessionId string) error
+
+	CreateContent(req views.CreateContentRequest) (string, error)
+	CreatePost(req views.CreatePostStruct) (string, error)
+	GetPost(iden string) (views.Post, error)
+	GetContent(contentId string) (views.Content, error)
 }
 
 type PqInstance struct {
