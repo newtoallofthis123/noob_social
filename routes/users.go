@@ -168,3 +168,71 @@ func (api *ApiServer) handleUserSignUp(c *gin.Context) {
 
 	c.Redirect(302, "/otp-login?otp_id="+optId)
 }
+
+func (api *ApiServer) handleUserCustomize(c *gin.Context) {
+	bio := c.PostForm("bio")
+	profilePic, err := c.FormFile("profile_picture")
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+	userId, ok := c.GetPostForm("user_id")
+	if !ok {
+		c.String(500, err.Error())
+		return
+	}
+
+	c.SaveUploadedFile(profilePic, "static/assets/profile_pics/"+profilePic.Filename)
+
+	finalName, err := utils.CheckPicture(profilePic.Filename)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	req := views.CreateProfileReq{
+		Bio:        bio,
+		ProfilePic: finalName,
+		UserId:     userId,
+	}
+
+	// if there is a profile, delete it
+	profile, err := api.store.GetProfileByUser(userId)
+	if err == nil {
+		err = api.store.DeleteProfile(profile.Id.String())
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+	}
+
+	profileId, err := api.store.CreateProfile(req)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	c.String(200, "Created profile with id "+profileId)
+}
+
+func (api *ApiServer) handleGetUserAvatar(c *gin.Context) {
+	userName := c.Param("u")
+
+	user, err := api.store.GetUserByUsername(userName)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	profile, err := api.store.GetProfileByUser(user.Id.String())
+	if err != nil {
+		c.Redirect(302, "/defaultAvatar/"+user.Username)
+	}
+
+	imageFile, err := utils.GetImage(profile.ProfilePic)
+	if err != nil {
+		c.Redirect(302, "/defaultAvatar/"+user.Username)
+	}
+
+	c.Data(200, "image/png", imageFile.Bytes())
+}

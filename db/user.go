@@ -112,9 +112,9 @@ func (pq *PqInstance) GetOtp(otp_id string) (string, string, error) {
 	return otp, userId, nil
 }
 
-func (pq *PqInstance) DeleteOtp(userId string) error {
+func (pq *PqInstance) DeleteOtp(otpId string) error {
 
-	query := pq.Builder.Delete("otp").Where(squirrel.Eq{"user_id": userId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+	query := pq.Builder.Delete("otp").Where(squirrel.Eq{"id": otpId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
 
 	_, err := query.Exec()
 	if err != nil {
@@ -176,4 +176,48 @@ func (pq *PqInstance) DeleteSession(sessionId string) error {
 	}
 
 	return nil
+}
+
+func (pq *PqInstance) CreateProfile(req views.CreateProfileReq) (string, error) {
+	query := pq.Builder.Insert("profile").Columns("id", "profile_pic", "user_id", "bio", "created_at").Values(uuid.New(), req.ProfilePic, req.UserId, req.Bio, carbon.Now()).Suffix("RETURNING \"id\"").RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	toReturn := ""
+
+	if query.QueryRow().Scan(&toReturn) != nil {
+		return "", nil
+	}
+
+	return toReturn, nil
+}
+
+func (pq *PqInstance) DeleteProfile(profileId string) error {
+	query := pq.Builder.Delete("profile").Where(squirrel.Eq{"id": profileId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	_, err := query.Exec()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pq *PqInstance) GetProfileByUser(userId string) (views.Profile, error) {
+	query := pq.Builder.Select("*").From("profile").Where(squirrel.Eq{"user_id": userId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	profile := views.Profile{}
+
+	profileId := ""
+
+	err := query.QueryRow().Scan(&profileId, &profile.ProfilePic, &profile.UserId, &profile.Bio, &profile.CreatedAt)
+	if err != nil {
+		return views.Profile{}, err
+	}
+
+	profile.Id, err = uuid.Parse(profileId)
+	if err != nil {
+		return views.Profile{}, err
+	}
+
+	return profile, nil
 }

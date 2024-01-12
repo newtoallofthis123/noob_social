@@ -19,3 +19,17 @@ type Session struct {
 	UserId    string    `json:"user_id"`
 	CreatedAt string    `json:"created_at"`
 }
+
+type CreateProfileReq struct {
+	ProfilePic string `json:"profile_pic"`
+	UserId     string `json:"user_id"`
+	Bio        string `json:"bio"`
+}
+
+type Profile struct {
+	Id         uuid.UUID `json:"id"`
+	ProfilePic string    `json:"profile_pic"`
+	UserId     string    `json:"user_id"`
+	Bio        string    `json:"bio"`
+	CreatedAt  string    `json:"created_at"`
+}

@@ -25,6 +25,10 @@ type Store interface {
 	CreatePost(req views.CreatePostStruct) (string, error)
 	GetPost(iden string) (views.Post, error)
 	GetContent(contentId string) (views.Content, error)
+
+	CreateProfile(req views.CreateProfileReq) (string, error)
+	DeleteProfile(profileId string) error
+	GetProfileByUser(userId string) (views.Profile, error)
 }
 
 type PqInstance struct {
@@ -51,7 +55,7 @@ func New() (*PqInstance, error) {
 // InitDb Returns a tested and created DbInstance.
 // Inherited from New(), this db instance is tested and connected
 // and is also pinged to ensure that the connection is still alive.
-func InitDb() (*PqInstance, error) {
+func InitDb(refresh bool) (*PqInstance, error) {
 	db, err := New()
 	if err != nil {
 		return nil, err
@@ -62,7 +66,7 @@ func InitDb() (*PqInstance, error) {
 		return nil, err
 	}
 
-	err = createTables(false, db)
+	err = createTables(refresh, db)
 	if err != nil {
 		return nil, err
 	}

@@ -1,0 +1,59 @@
+package templates
+
+import "github.com/newtoallofthis123/noob_social/views"
+
+templ CustomizationPage(userId string, update bool, profile views.Profile) {
+	<div class="flex flex-col justify-center items-center">
+		<div class="py-3">
+			<p id="message"></p>
+			<form action="/customizeUser" method="post" enctype="multipart/form-data" class="p-2 flex flex-col justify-center items-center gap-4">
+				<h1 class="text-2xl font-bold">
+					if update == true {
+						Update your profile
+					} else {
+						Create your profile
+					}
+				</h1>
+				<p>
+					if update == true {
+						Edit your Bio
+					} else {
+						Add a Bio
+					}
+				</p>
+				<input type="hidden" name="user_id" value={ userId }/>
+				<input
+ 					type="text"
+ 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+ 					autocomplete="off"
+ 					name="bio"
+ 					value={ profile.Bio }
+ 					placeholder="Bio"
+ 					id="bio"
+				/>
+				<p>
+					Choose a profile picture
+				</p>
+				<div>
+					<img src={ profile.ProfilePic } alt=""/>
+				</div>
+				<input
+ 					type="file"
+ 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+ 					name="profile_picture"
+ 					id="profile_picture"
+				/>
+				<button
+ 					class="bg-black text-white p-2 w-2/4 font-semibold rounded-md"
+ 					type="submit"
+				>
+					if update == true {
+						Update
+					} else {
+						Create
+					}
+				</button>
+			</form>
+		</div>
+	</div>
+}

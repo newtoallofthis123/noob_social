@@ -13,6 +13,14 @@ func createTables(refresh bool, db *PqInstance) error {
 		created_at TIMESTAMP NOT NULL
 	);
 
+	CREATE TABLE IF NOT EXISTS profile(
+		id UUID PRIMARY KEY,
+		profile_pic VARCHAR(255),
+		user_id UUID REFERENCES users(id),
+		bio TEXT,
+		created_at TIMESTAMP NOT NULL
+	);
+
 	CREATE TABLE IF NOT EXISTS sessions (
 		id UUID PRIMARY KEY,
 		user_id UUID REFERENCES users(id),

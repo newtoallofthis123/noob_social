@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/newtoallofthis123/noob_social/templates"
+	"github.com/newtoallofthis123/noob_social/views"
 )
 
 func (api *ApiServer) handleLoginPage(c *gin.Context) {
@@ -32,14 +33,14 @@ func (api *ApiServer) handleHomePage(c *gin.Context) {
 	session, err := api.store.GetSessionById(sessionId)
 	if err != nil {
 		fmt.Println(err)
-		c.Redirect(302, "/login")
+		c.Redirect(302, "/logout")
 		return
 	}
 
 	user, err := api.store.GetUserById(session.UserId)
 	if err != nil {
 		fmt.Println(err)
-		c.Redirect(302, "/login")
+		c.Redirect(302, "/err")
 		return
 	}
 
@@ -48,4 +49,23 @@ func (api *ApiServer) handleHomePage(c *gin.Context) {
 
 func (api *ApiServer) handleSignUpPage(c *gin.Context) {
 	templates.AntiProtected("Sign Up", templates.SignUpPage(c.Query("email"))).Render(c.Request.Context(), c.Writer)
+}
+
+func (api *ApiServer) handleCustomizationPage(c *gin.Context) {
+	toUpdate := false
+	isNew := c.Query("new")
+	if isNew == "" {
+		toUpdate = true
+	}
+
+	userId, ok := c.Get("user_id")
+	fmt.Println(userId)
+	if !ok {
+		c.Redirect(302, "/login")
+		return
+	}
+
+	userIdStr := userId.(string)
+
+	templates.Protected(templates.Base("NoobSocial", templates.CustomizationPage(userIdStr, toUpdate, views.Profile{}))).Render(c.Request.Context(), c.Writer)
 }

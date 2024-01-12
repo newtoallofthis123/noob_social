@@ -15,7 +15,7 @@ type ApiServer struct {
 // Returns a new Tested ApiServer.
 func New() *ApiServer {
 	listenAddr := utils.ReadEnv().ListenAddr
-	store, err := db.InitDb()
+	store, err := db.InitDb(false)
 	if err != nil {
 		panic(err)
 	}
@@ -58,11 +58,17 @@ func (api *ApiServer) Start() error {
 	r.GET("/checkSession", api.handleAuthCheck)
 	r.POST("/logout", api.handleSignOut)
 
+	// util routes
+	r.GET("/defaultAvatar/:u", handleDefaultAvatar)
+	r.GET("/avatar/:u", api.handleGetUserAvatar)
+
 	// authenticated routes
 	auth := r.Group("/")
 	auth.Use(api.authMiddleware())
 
 	auth.POST("/createPost", api.handleCreatePost)
+	auth.GET("/customization", api.handleCustomizationPage)
+	auth.POST("/customizeUser", api.handleUserCustomize)
 
 	r.GET("/:username/post/:iden", api.handlePostPage)
 
