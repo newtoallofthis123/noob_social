@@ -48,7 +48,8 @@ func createTables(refresh bool, db *PqInstance) error {
 		id TEXT PRIMARY KEY,
 		author UUID REFERENCES users(id),
 		content UUID REFERENCES contents(id),
-		comment_to TEXT REFERENCES posts(id),
+		total_likes INT DEFAULT 0,
+		comment_to TEXT,
 		created_at TIMESTAMP NOT NULL
 	); 
 

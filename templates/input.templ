@@ -1,26 +1,31 @@
 package templates
 
-templ UserInfo(username string) {
-	<div class="w-full p-0.5 flex flex-row justify-start items-center">
+import "github.com/newtoallofthis123/noob_social/views"
+
+templ UserInfo(username string, profile views.Profile) {
+	<div class="p-0.5 flex flex-row justify-start justify-items-start items-center">
 		<div class="w-1/6">
-			<img src={ "/favicon" } class="w-12 h-10 pr-2 rounded-xl" alt=""/>
+			<a hx-boost={ "/" + username } href={ templ.SafeURL("/" + username) }>
+				<img src={ "/avatar/" + username } class="w-12 h-10 pr-2 rounded-xl" alt=""/>
+			</a>
 		</div>
-		<div class="w-4/6 dark:text-neutral-100 text-neutral-950">
+		<div class="w-5/6 dark:text-neutral-100 text-neutral-950">
 			<h3>
-				{ "@" }{ username }
+				{ profile.FullName }
 			</h3>
 			<p class="dark:text-neutral-200 text-neutral-800 text-sm">
-				Logged in and ready!
+				{ "@" }{ username }
 			</p>
-		</div>
-		<div class="w-1/6">
-			<button><i class="w-10 bi bi-list"></i></button>
 		</div>
 	</div>
 }
 
 templ CreatePostInput(username string) {
 	<div class="flex flex-col justify-center items-start px-0.5 gap-y-3">
+		<form action="/search" class="flex flex-row border-2 w-full dark:border-neutral-200 border-neutral-900 rounded-md mx-1 p-0.5 px-2 mb-0.5">
+			<input placeholder="Super Fast Search" class=" p-1 dark:text-neutral-200 w-[90%] dark:bg-neutral-900 px-3 focus:outline-none rounded-xl focus-within:outline-none" autocomplete="off" spellcheck="false" type="search" name="q" id="q"/>
+			<button class="p-0.5 w-[10%]" type="submit">🔎</button>
+		</form>
 		<div class="w-full p-0.5 flex flex-row justify-center items-center">
 			<div class="w-1/6">
 				<a href="/profile">
@@ -39,8 +44,12 @@ templ CreatePostInput(username string) {
 				<button><i class="w-10 bi bi-list"></i></button>
 			</div>
 		</div>
-		<form>
+		<form action="/createPost" method="post" enctype="multipart/form-data">
 			<div class="border-2 dark:border-gray-300 border-gray-800 rounded-md">
+				<p id="commentTo" class="dark:bg-neutral-100 bg-neutral-800 text-neutral-100 dark:text-neutral-800 hidden px-2 py-0.5">
+					Replying to <span id="replyingTo"></span>
+				</p>
+				<input type="hidden" name="comment_id" id="comment_id"/>
 				<textarea
  					class="focus:outline-none focus:ring-0 rounded-md text-base p-2 text-neutral-900 dark:text-neutral-100 dark:bg-neutral-900"
  					name="content"
@@ -53,11 +62,17 @@ templ CreatePostInput(username string) {
 				<input type="hidden" name="post_type" value="text"/>
 				<div class="dark:bg-neutral-300 dark:text-neutral-900 rounded-b-sm">
 					<div class="flex flex-row justify-between items-center">
-						<div>
-							<button class="rounded-md">
-								<i class="bi bi-paperclip"></i>
-							</button>
-						</div>
+						<label for="fileInput" class="cursor-pointer">
+							<p class="text-base rounded-md">
+								<i class="bi bi-paperclip"></i> <span id="imageName" class="text-sm">Image</span>
+							</p>
+							<input
+ 								id="fileInput"
+ 								type="file"
+ 								name="image"
+ 								class="hidden"
+							/>
+						</label>
 						<div></div>
 					</div>
 				</div>
@@ -65,10 +80,6 @@ templ CreatePostInput(username string) {
 			<div class="flex flex-row w-full justify-between items-center">
 				<div class="w-3/5"></div>
 				<button
- 					hx-post="/createPost"
- 					hx-target="#message"
- 					hx-swap="afterbegin"
- 					hx-trigger="submit, click"
  					class="dark:bg-neutral-100 mt-2 dark:text-black bg-neutral-800 text-white text-lg px-3 py-1 rounded-md"
  					type="submit"
 				>Post!</button>

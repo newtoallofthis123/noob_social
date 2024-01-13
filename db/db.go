@@ -26,6 +26,10 @@ type Store interface {
 	GetPost(iden string) (views.Post, error)
 	GetContent(contentId string) (views.Content, error)
 	GetPostsByUser(userId string) ([]views.FullPost, error)
+	CreateLike(userId string, postId string) error
+	UpdateTotalLikes(postId, exp string) error
+	GetLike(userId string, postId string) (views.Like, error)
+	DeleteLike(likeId string) error
 
 	CreateProfile(req views.CreateProfileReq) (string, error)
 	DeleteProfile(profileId string) error

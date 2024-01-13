@@ -28,14 +28,22 @@ type Content struct {
 
 // Post is a struct that contains the post
 type Post struct {
-	Id        string `json:"id"`
-	Author    string `json:"author"`
-	Content   string `json:"content"`
-	CommentTo string `json:"comment_to"`
-	CreatedAt string `json:"created_at"`
+	Id         string `json:"id"`
+	Author     string `json:"author"`
+	Content    string `json:"content"`
+	TotalLikes int    `json:"total_likes"`
+	CommentTo  string `json:"comment_to"`
+	CreatedAt  string `json:"created_at"`
 }
 
 type FullPost struct {
 	Post    Post    `json:"post"`
 	Content Content `json:"content"`
+}
+
+type Like struct {
+	Id        string `json:"id"`
+	UserId    string `json:"user_id"`
+	PostId    string `json:"post_id"`
+	CreatedAt string `json:"created_at"`
 }

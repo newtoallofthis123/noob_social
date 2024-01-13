@@ -10,7 +10,11 @@ import (
 	"github.com/o1egl/govatar"
 )
 
-const FILEPATH = "./static/assets/profile_pics/"
+// FILEPATH is the path to the profile pictures
+const FILEPATH string = "./static/assets/images/"
+
+// STATICPATH is the path to the static folder from the web server
+const STATICPATH string = "/static/assets/images/"
 
 // Uses the govatar library to generate an avatar
 // for the user
@@ -31,7 +35,7 @@ func GetAvatar(username string) (bytes.Buffer, error) {
 	return imgBuff, nil
 }
 
-func CheckPicture(name string) (string, error) {
+func CheckPicture(name string, resize bool) (string, error) {
 	// read from /static/assets/profile_pics
 	file, err := os.Open(FILEPATH + name)
 	if err != nil {
@@ -46,8 +50,10 @@ func CheckPicture(name string) (string, error) {
 		return "", err
 	}
 
-	resizedImage := transform.Resize(fileImage, 128, 128, transform.Linear)
-
+	resizedImage := fileImage
+	if resize {
+		resizedImage = transform.Resize(fileImage, 128, 128, transform.Linear)
+	}
 	if png.Encode(&imageBuff, resizedImage) != nil {
 		return "", err
 	}

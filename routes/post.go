@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	htmlmaker "github.com/newtoallofthis123/html_maker"
 	"github.com/newtoallofthis123/noob_social/templates"
+	"github.com/newtoallofthis123/noob_social/utils"
 	"github.com/newtoallofthis123/noob_social/views"
 	"github.com/shurcooL/github_flavored_markdown"
 )
@@ -25,16 +25,26 @@ func (api *ApiServer) handleCreatePost(c *gin.Context) {
 	createContentReq.Body = body
 	createContentReq.PostType = postType
 
-	if postType == "img" {
-		// TODO: Upload image to local disk
-		createContentReq.Image = ""
-	} else if postType == "vid" {
-		// TODO: Upload video to local disk
-		createContentReq.Video = ""
+	image, err := c.FormFile("image")
+	var finalName string = ""
+	if err == nil {
+		c.SaveUploadedFile(image, utils.FILEPATH+image.Filename)
+
+		finalName, err = utils.CheckPicture(image.Filename, false)
+		if err != nil {
+			// again, we want to display the error to the user
+			c.String(200, err.Error())
+			return
+		}
+		createContentReq.Image = finalName
 	} else {
+		fmt.Println(err)
+		fmt.Println("Not processing image")
 		createContentReq.Image = ""
-		createContentReq.Video = ""
 	}
+
+	// TODO: Video support
+	createContentReq.Video = ""
 
 	content, err := api.store.CreateContent(createContentReq)
 	if err != nil {
@@ -51,34 +61,25 @@ func (api *ApiServer) handleCreatePost(c *gin.Context) {
 
 	// We are just creating a post, not a comment
 	// If we were creating a comment, we would set this to the post ID
-	createPostReq.CommentTo = ""
+	commentId := c.PostForm("comment_id")
+	if commentId != "" {
+		createPostReq.CommentTo = commentId
+	}
 
 	postIden, err := api.store.CreatePost(createPostReq)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"error": err.Error(),
-		})
+		c.String(500, err.Error())
+		fmt.Println(err)
 		return
 	}
 
 	user, err := api.store.GetUserById(userID.(string))
 	if err != nil {
-		c.JSON(500, gin.H{
-			"error": err.Error(),
-		})
+		c.String(500, err.Error())
 		return
 	}
 
-	tag := htmlmaker.New("div")
-
-	linkTag := htmlmaker.New("a")
-	linkTag.AddAttr("href", fmt.Sprintf("/%s/post/%s", user.Username, postIden))
-	linkTag.AddClasses([]string{"underline", "text-blue-500", "hover:text-blue-700"})
-	linkTag.Body = "Created post with ID " + postIden
-
-	tag.AddChild(linkTag)
-
-	c.String(200, tag.Convert())
+	c.Redirect(302, fmt.Sprintf("/%s/post/%s", user.Username, postIden))
 }
 
 func (api *ApiServer) handlePostPage(c *gin.Context) {
@@ -118,15 +119,37 @@ func (api *ApiServer) handlePostPage(c *gin.Context) {
 		name = username
 	}
 
-	templates.AppLayout(fmt.Sprintf("%s: \"%s\" on NoobSocial", name, reducedBody), username, templates.PostPage(username, post, content)).Render(c.Request.Context(), c.Writer)
+	isLiked := false
+	user_id, ok := c.Get("user_id")
+	if !ok {
+		isLiked = false
+	} else {
+		_, err := api.store.GetLike(user_id.(string), postIden)
+		if err != nil {
+			isLiked = false
+		} else {
+			isLiked = true
+		}
+	}
+
+	back := c.Query("back")
+	if back == "" {
+		back = "/"
+	}
+
+	user, err := api.store.GetUserById(user_id.(string))
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	templates.AppLayout(fmt.Sprintf("%s: \"%s\" on NoobSocial", name, reducedBody), user.Username, templates.PostPage(isLiked, username, post, content, profile, back)).Render(c.Request.Context(), c.Writer)
 }
 
 func (api *ApiServer) handleGetMdContent(c *gin.Context) {
 	body := c.PostForm("body")
 
 	mdText := github_flavored_markdown.Markdown([]byte(body))
-
-	fmt.Println(string(mdText))
 
 	c.String(200, string(mdText))
 }
@@ -147,4 +170,61 @@ func (api *ApiServer) handleJsonUserPosts(c *gin.Context) {
 	}
 
 	c.JSON(200, userPosts)
+}
+
+func (api *ApiServer) handleUserLike(c *gin.Context) {
+	userId, ok := c.Get("user_id")
+	if !ok {
+		c.Redirect(302, "/login")
+		return
+	}
+
+	postId := c.PostForm("post_id")
+
+	err := api.store.CreateLike(userId.(string), postId)
+	if err != nil {
+		fmt.Println(userId, postId, err)
+		c.String(500, err.Error())
+		return
+	}
+
+	err = api.store.UpdateTotalLikes(postId, "total_likes + 1")
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	c.Header("HX-Refresh", "true")
+	c.String(200, "ok")
+}
+
+func (api *ApiServer) handleUserUnlike(c *gin.Context) {
+	userId, ok := c.Get("user_id")
+	if !ok {
+		c.Redirect(302, "/login")
+		return
+	}
+
+	postId := c.PostForm("post_id")
+
+	like, err := api.store.GetLike(userId.(string), postId)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	err = api.store.DeleteLike(like.Id)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	err = api.store.UpdateTotalLikes(postId, "total_likes - 1")
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	c.Header("HX-Refresh", "true")
+	c.String(200, "ok")
 }

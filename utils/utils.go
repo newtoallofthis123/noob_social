@@ -2,6 +2,7 @@ package utils
 
 import "math/rand"
 
+// GenerateOtp generates a random number of length len
 func GenerateOtp(len int) string {
 	pool := "0123456789"
 
@@ -18,6 +19,8 @@ func generate(length int, pool string) string {
 	return otp
 }
 
+// GenerateRandomString generates a random string of length len
+// using the pool of characters provided
 func GenerateRandomString(len int) string {
 	pool := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 

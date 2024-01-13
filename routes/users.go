@@ -173,20 +173,18 @@ func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 	bio := c.PostForm("bio")
 	fullName := c.PostForm("full_name")
 	profilePic, err := c.FormFile("profile_picture")
-	if err != nil {
-		c.String(500, err.Error())
-		return
+	var finalName string = ""
+	if err == nil {
+		c.SaveUploadedFile(profilePic, utils.FILEPATH+profilePic.Filename)
+
+		finalName, err = utils.CheckPicture(profilePic.Filename, true)
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
 	}
 	userId, ok := c.GetPostForm("user_id")
 	if !ok {
-		c.String(500, err.Error())
-		return
-	}
-
-	c.SaveUploadedFile(profilePic, "static/assets/profile_pics/"+profilePic.Filename)
-
-	finalName, err := utils.CheckPicture(profilePic.Filename)
-	if err != nil {
 		c.String(500, err.Error())
 		return
 	}
@@ -228,6 +226,10 @@ func (api *ApiServer) handleGetUserAvatar(c *gin.Context) {
 
 	profile, err := api.store.GetProfileByUser(user.Id.String())
 	if err != nil {
+		c.Redirect(302, "/defaultAvatar/"+user.Username)
+	}
+
+	if profile.ProfilePic == "" {
 		c.Redirect(302, "/defaultAvatar/"+user.Username)
 	}
 

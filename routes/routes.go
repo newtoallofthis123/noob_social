@@ -67,8 +67,6 @@ func (api *ApiServer) Start() error {
 	// Some JSON routes for testing
 	r.GET("/json/:username/posts", api.handleJsonUserPosts)
 
-	user := r.Group("/:username")
-
 	// authenticated routes
 	auth := r.Group("/")
 	auth.Use(api.authMiddleware())
@@ -77,7 +75,10 @@ func (api *ApiServer) Start() error {
 	auth.GET("/customization", api.handleCustomizationPage)
 	auth.POST("/customizeUser", api.handleUserCustomize)
 
-	user.GET("/post/:iden", api.handlePostPage)
+	auth.POST("/likePost", api.handleUserLike)
+	auth.POST("/unlikePost", api.handleUserUnlike)
+
+	auth.GET("/:username/post/:iden", api.handlePostPage)
 
 	err := r.Run(api.listenAddr)
 	return err
