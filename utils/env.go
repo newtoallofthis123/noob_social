@@ -14,6 +14,11 @@ type Env struct {
 	MailPassword string
 }
 
+// Handles Feature Flags and such
+type Config struct {
+	DbRefresh bool
+}
+
 // Reads the .env file and returns an Env struct.
 func ReadEnv() Env {
 	godotenv.Load(".env")
@@ -23,6 +28,14 @@ func ReadEnv() Env {
 		ListenAddr:   getEnv("LISTEN_ADDR"),
 		Mail:         getEnv("MAIL"),
 		MailPassword: getEnv("MAIL_PASSWORD"),
+	}
+}
+
+func ReadConfig() Config {
+	godotenv.Load(".env")
+
+	return Config{
+		DbRefresh: getEnv("DB_REFRESH") == "true",
 	}
 }
 

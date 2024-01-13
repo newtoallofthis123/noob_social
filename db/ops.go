@@ -15,6 +15,7 @@ func createTables(refresh bool, db *PqInstance) error {
 
 	CREATE TABLE IF NOT EXISTS profile(
 		id UUID PRIMARY KEY,
+		full_name TEXT,
 		profile_pic VARCHAR(255),
 		user_id UUID REFERENCES users(id),
 		bio TEXT,

@@ -179,7 +179,7 @@ func (pq *PqInstance) DeleteSession(sessionId string) error {
 }
 
 func (pq *PqInstance) CreateProfile(req views.CreateProfileReq) (string, error) {
-	query := pq.Builder.Insert("profile").Columns("id", "profile_pic", "user_id", "bio", "created_at").Values(uuid.New(), req.ProfilePic, req.UserId, req.Bio, carbon.Now()).Suffix("RETURNING \"id\"").RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+	query := pq.Builder.Insert("profile").Columns("id", "full_name", "profile_pic", "user_id", "bio", "created_at").Values(uuid.New(), req.FullName, req.ProfilePic, req.UserId, req.Bio, carbon.Now()).Suffix("RETURNING \"id\"").RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
 
 	toReturn := ""
 
@@ -209,7 +209,7 @@ func (pq *PqInstance) GetProfileByUser(userId string) (views.Profile, error) {
 
 	profileId := ""
 
-	err := query.QueryRow().Scan(&profileId, &profile.ProfilePic, &profile.UserId, &profile.Bio, &profile.CreatedAt)
+	err := query.QueryRow().Scan(&profileId, &profile.FullName, &profile.ProfilePic, &profile.UserId, &profile.Bio, &profile.CreatedAt)
 	if err != nil {
 		return views.Profile{}, err
 	}

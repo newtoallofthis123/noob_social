@@ -65,3 +65,41 @@ func (pq *PqInstance) GetContent(contentId string) (views.Content, error) {
 
 	return content, nil
 }
+
+func (pq *PqInstance) GetPostsByUser(userId string) ([]views.FullPost, error) {
+	query := pq.Builder.Select("*").From("posts").Where(squirrel.Eq{"author": userId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	var posts []views.FullPost
+
+	var commentId uuid.UUID
+
+	rows, err := query.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var post views.FullPost
+		err := rows.Scan(&post.Post.Id, &post.Post.Author, &post.Post.Content, &commentId, &post.Post.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		if commentId != uuid.Nil {
+			post.Post.CommentTo = commentId.String()
+		} else {
+			post.Post.CommentTo = ""
+		}
+
+		content, err := pq.GetContent(post.Post.Content)
+		if err != nil {
+			return nil, err
+		}
+
+		post.Content = content
+
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}

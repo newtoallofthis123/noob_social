@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.postBody a {
+    color: #6296fd;
+    text-decoration-color: #6296fd;
+    text-decoration: underline;
+}

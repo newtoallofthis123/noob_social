@@ -32,6 +32,22 @@ templ CustomizationPage(userId string, update bool, profile views.Profile) {
  					id="bio"
 				/>
 				<p>
+					if update == true {
+						Edit your Name
+					} else {
+						Add your Name
+					}
+				</p>
+				<input
+ 					type="text"
+ 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+ 					autocomplete="off"
+ 					name="full_name"
+ 					value={ profile.FullName }
+ 					placeholder="Your Full Name"
+ 					id="full_name"
+				/>
+				<p>
 					Choose a profile picture
 				</p>
 				<div>

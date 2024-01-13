@@ -7,6 +7,7 @@ import (
 	htmlmaker "github.com/newtoallofthis123/html_maker"
 	"github.com/newtoallofthis123/noob_social/templates"
 	"github.com/newtoallofthis123/noob_social/views"
+	"github.com/shurcooL/github_flavored_markdown"
 )
 
 func (api *ApiServer) handleCreatePost(c *gin.Context) {
@@ -96,7 +97,54 @@ func (api *ApiServer) handlePostPage(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(content)
+	profile, err := api.store.GetProfileByUser(post.Author)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
 
-	templates.AppLayout(fmt.Sprintf("%s posted on NoobSocial", username), username, templates.PostPage(username, post, content)).Render(c.Request.Context(), c.Writer)
+	// reduce body to 50 chars
+	reducedBody := ""
+	if len(content.Body) > 50 {
+		reducedBody = content.Body[:50] + "..."
+	} else {
+		reducedBody = content.Body
+	}
+
+	name := ""
+	if profile.FullName != "" {
+		name = profile.FullName
+	} else {
+		name = username
+	}
+
+	templates.AppLayout(fmt.Sprintf("%s: \"%s\" on NoobSocial", name, reducedBody), username, templates.PostPage(username, post, content)).Render(c.Request.Context(), c.Writer)
+}
+
+func (api *ApiServer) handleGetMdContent(c *gin.Context) {
+	body := c.PostForm("body")
+
+	mdText := github_flavored_markdown.Markdown([]byte(body))
+
+	fmt.Println(string(mdText))
+
+	c.String(200, string(mdText))
+}
+
+func (api *ApiServer) handleJsonUserPosts(c *gin.Context) {
+	username := c.Params.ByName("username")
+
+	user, err := api.store.GetUserByUsername(username)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	userPosts, err := api.store.GetPostsByUser(user.Id.String())
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	c.JSON(200, userPosts)
 }

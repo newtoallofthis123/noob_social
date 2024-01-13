@@ -171,6 +171,7 @@ func (api *ApiServer) handleUserSignUp(c *gin.Context) {
 
 func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 	bio := c.PostForm("bio")
+	fullName := c.PostForm("full_name")
 	profilePic, err := c.FormFile("profile_picture")
 	if err != nil {
 		c.String(500, err.Error())
@@ -192,6 +193,7 @@ func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 
 	req := views.CreateProfileReq{
 		Bio:        bio,
+		FullName:   fullName,
 		ProfilePic: finalName,
 		UserId:     userId,
 	}
@@ -206,13 +208,13 @@ func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 		}
 	}
 
-	profileId, err := api.store.CreateProfile(req)
+	_, err = api.store.CreateProfile(req)
 	if err != nil {
 		c.String(500, err.Error())
 		return
 	}
 
-	c.String(200, "Created profile with id "+profileId)
+	c.Redirect(302, "/")
 }
 
 func (api *ApiServer) handleGetUserAvatar(c *gin.Context) {

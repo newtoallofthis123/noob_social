@@ -7,8 +7,9 @@ templ PostPage(username string, post views.Post, content views.Content) {
 		<div>
 			// @UserInfo(username)
 		</div>
-		<div>
-			{ content.Body }
-		</div>
+		<div class="postBody" id="body"></div>
+		<form class="hidden" hx-post="/md" hx-target="#body" hx-trigger="load">
+			<input type="hidden" name="body" value={ content.Body }/>
+		</form>
 	</div>
 }

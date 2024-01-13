@@ -34,3 +34,8 @@ type Post struct {
 	CommentTo string `json:"comment_to"`
 	CreatedAt string `json:"created_at"`
 }
+
+type FullPost struct {
+	Post    Post    `json:"post"`
+	Content Content `json:"content"`
+}

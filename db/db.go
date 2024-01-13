@@ -25,6 +25,7 @@ type Store interface {
 	CreatePost(req views.CreatePostStruct) (string, error)
 	GetPost(iden string) (views.Post, error)
 	GetContent(contentId string) (views.Content, error)
+	GetPostsByUser(userId string) ([]views.FullPost, error)
 
 	CreateProfile(req views.CreateProfileReq) (string, error)
 	DeleteProfile(profileId string) error
