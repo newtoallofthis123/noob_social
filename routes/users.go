@@ -172,8 +172,8 @@ func (api *ApiServer) handleUserSignUp(c *gin.Context) {
 func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 	bio := c.PostForm("bio")
 	fullName := c.PostForm("full_name")
-	profilePic, err := c.FormFile("profile_picture")
 	var finalName string = ""
+	profilePic, err := c.FormFile("profile_picture")
 	if err == nil {
 		c.SaveUploadedFile(profilePic, utils.FILEPATH+profilePic.Filename)
 
@@ -182,10 +182,37 @@ func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 			c.String(500, err.Error())
 			return
 		}
+	} else {
+		existingPic, ok := c.GetPostForm("existing_pic")
+		if !ok {
+			finalName = ""
+		}
+
+		finalName = existingPic
 	}
+
+	var bannerName string = ""
+	bannerPic, err := c.FormFile("banner")
+	if err == nil {
+		c.SaveUploadedFile(bannerPic, utils.FILEPATH+bannerPic.Filename)
+
+		bannerName, err = utils.CheckPicture(bannerPic.Filename, false)
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+	} else {
+		existingBanner, ok := c.GetPostForm("existing_banner")
+		if !ok {
+			bannerName = ""
+		}
+
+		bannerName = existingBanner
+	}
+
 	userId, ok := c.GetPostForm("user_id")
 	if !ok {
-		c.String(500, err.Error())
+		c.String(500, "No user id")
 		return
 	}
 
@@ -193,6 +220,7 @@ func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 		Bio:        bio,
 		FullName:   fullName,
 		ProfilePic: finalName,
+		Banner:     bannerName,
 		UserId:     userId,
 	}
 
@@ -239,4 +267,26 @@ func (api *ApiServer) handleGetUserAvatar(c *gin.Context) {
 	}
 
 	c.Data(200, "image/png", imageFile.Bytes())
+}
+
+func (api *ApiServer) handleProfilePage(c *gin.Context) {
+	_, ok := c.Get("user_id")
+	if !ok {
+		c.Redirect(302, "/login")
+		return
+	}
+
+	username := c.Param("username")
+	user, err := api.store.GetUserByUsername(username)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	_, err = api.store.GetPostsByUser(user.Id.String())
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
 }

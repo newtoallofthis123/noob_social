@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/png"
 	"os"
+	"strings"
 
 	"github.com/anthonynsimon/bild/transform"
 	"github.com/o1egl/govatar"
@@ -94,4 +95,24 @@ func GetImage(name string) (bytes.Buffer, error) {
 	}
 
 	return imageBuff, nil
+}
+
+func DeleteUnused(used []string) error {
+	files, err := os.ReadDir(FILEPATH)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		// check if file is in used
+		// if not, delete it
+		if !strings.Contains(strings.Join(used, " "), file.Name()) {
+			err = os.Remove(FILEPATH + file.Name())
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

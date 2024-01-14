@@ -17,6 +17,7 @@ func createTables(refresh bool, db *PqInstance) error {
 		id UUID PRIMARY KEY,
 		full_name TEXT,
 		profile_pic VARCHAR(255),
+		banner VARCHAR(255),
 		user_id UUID REFERENCES users(id),
 		bio TEXT,
 		created_at TIMESTAMP NOT NULL

@@ -24,6 +24,7 @@ type CreateProfileReq struct {
 	FullName   string `json:"full_name"`
 	ProfilePic string `json:"profile_pic"`
 	UserId     string `json:"user_id"`
+	Banner     string `json:"banner"`
 	Bio        string `json:"bio"`
 }
 
@@ -33,5 +34,6 @@ type Profile struct {
 	ProfilePic string    `json:"profile_pic"`
 	UserId     string    `json:"user_id"`
 	Bio        string    `json:"bio"`
+	Banner     string    `json:"banner"`
 	CreatedAt  string    `json:"created_at"`
 }

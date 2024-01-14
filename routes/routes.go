@@ -79,6 +79,7 @@ func (api *ApiServer) Start() error {
 	auth.POST("/unlikePost", api.handleUserUnlike)
 
 	auth.GET("/:username/post/:iden", api.handlePostPage)
+	auth.GET("/:username", api.handleProfilePage)
 
 	err := r.Run(api.listenAddr)
 	return err

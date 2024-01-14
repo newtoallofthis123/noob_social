@@ -70,8 +70,6 @@ func (pq *PqInstance) GetPostsByUser(userId string) ([]views.FullPost, error) {
 
 	var posts []views.FullPost
 
-	var commentId uuid.UUID
-
 	rows, err := query.Query()
 	if err != nil {
 		return nil, err
@@ -79,15 +77,9 @@ func (pq *PqInstance) GetPostsByUser(userId string) ([]views.FullPost, error) {
 
 	for rows.Next() {
 		var post views.FullPost
-		err := rows.Scan(&post.Post.Id, &post.Post.Author, &post.Post.Content, &post.Post.TotalLikes, &commentId, &post.Post.CreatedAt)
+		err := rows.Scan(&post.Post.Id, &post.Post.Author, &post.Post.Content, &post.Post.TotalLikes, &post.Post.CommentTo, &post.Post.CreatedAt)
 		if err != nil {
 			return nil, err
-		}
-
-		if commentId != uuid.Nil {
-			post.Post.CommentTo = commentId.String()
-		} else {
-			post.Post.CommentTo = ""
 		}
 
 		content, err := pq.GetContent(post.Post.Content)

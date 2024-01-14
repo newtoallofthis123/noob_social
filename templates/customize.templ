@@ -1,6 +1,7 @@
 package templates
 
 import "github.com/newtoallofthis123/noob_social/views"
+import "github.com/newtoallofthis123/noob_social/utils"
 
 templ CustomizationPage(userId string, update bool, profile views.Profile) {
 	<div class="flex flex-col justify-center items-center">
@@ -51,13 +52,27 @@ templ CustomizationPage(userId string, update bool, profile views.Profile) {
 					Choose a profile picture
 				</p>
 				<div>
-					<img src={ profile.ProfilePic } alt=""/>
+					<img src={ utils.STATICPATH + profile.ProfilePic } alt=""/>
 				</div>
+				<input type="hidden" name="existing_pic" value={ profile.ProfilePic }/>
 				<input
  					type="file"
  					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
  					name="profile_picture"
  					id="profile_picture"
+				/>
+				<p>
+					Choose a banner picture
+				</p>
+				<div>
+					<img src={ utils.STATICPATH + profile.Banner } alt=""/>
+				</div>
+				<input type="hidden" name="existing_banner" value={ profile.Banner }/>
+				<input
+ 					type="file"
+ 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+ 					name="banner"
+ 					id="banner"
 				/>
 				<button
  					class="bg-black text-white p-2 w-2/4 font-semibold rounded-md"

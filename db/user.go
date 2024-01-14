@@ -179,7 +179,7 @@ func (pq *PqInstance) DeleteSession(sessionId string) error {
 }
 
 func (pq *PqInstance) CreateProfile(req views.CreateProfileReq) (string, error) {
-	query := pq.Builder.Insert("profile").Columns("id", "full_name", "profile_pic", "user_id", "bio", "created_at").Values(uuid.New(), req.FullName, req.ProfilePic, req.UserId, req.Bio, carbon.Now()).Suffix("RETURNING \"id\"").RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+	query := pq.Builder.Insert("profile").Columns("id", "full_name", "profile_pic", "banner", "user_id", "bio", "created_at").Values(uuid.New(), req.FullName, req.ProfilePic, req.Banner, req.UserId, req.Bio, carbon.Now()).Suffix("RETURNING \"id\"").RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
 
 	toReturn := ""
 
@@ -209,7 +209,7 @@ func (pq *PqInstance) GetProfileByUser(userId string) (views.Profile, error) {
 
 	profileId := ""
 
-	err := query.QueryRow().Scan(&profileId, &profile.FullName, &profile.ProfilePic, &profile.UserId, &profile.Bio, &profile.CreatedAt)
+	err := query.QueryRow().Scan(&profileId, &profile.FullName, &profile.ProfilePic, &profile.Banner, &profile.UserId, &profile.Bio, &profile.CreatedAt)
 	if err != nil {
 		return views.Profile{}, err
 	}
@@ -220,4 +220,29 @@ func (pq *PqInstance) GetProfileByUser(userId string) (views.Profile, error) {
 	}
 
 	return profile, nil
+}
+
+func (pq *PqInstance) GetAllPictures() ([]string, error) {
+	query := pq.Builder.Select("profile_pic", "banner").From("profile").RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	rows, err := query.Query()
+	if err != nil {
+		return []string{}, err
+	}
+
+	toReturn := []string{}
+
+	for rows.Next() {
+		var profilePic string
+		var banner string
+
+		err := rows.Scan(&profilePic, &banner)
+		if err != nil {
+			return []string{}, err
+		}
+
+		toReturn = append(toReturn, profilePic, banner)
+	}
+
+	return toReturn, nil
 }

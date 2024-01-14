@@ -34,6 +34,7 @@ type Store interface {
 	CreateProfile(req views.CreateProfileReq) (string, error)
 	DeleteProfile(profileId string) error
 	GetProfileByUser(userId string) (views.Profile, error)
+	GetAllPictures() ([]string, error)
 }
 
 type PqInstance struct {

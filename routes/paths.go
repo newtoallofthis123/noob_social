@@ -2,9 +2,11 @@ package routes
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/gin-gonic/gin"
 	"github.com/newtoallofthis123/noob_social/templates"
+	"github.com/newtoallofthis123/noob_social/utils"
 	"github.com/newtoallofthis123/noob_social/views"
 )
 
@@ -29,6 +31,23 @@ func (api *ApiServer) handleHomePage(c *gin.Context) {
 		c.Redirect(302, "/login")
 		return
 	}
+
+	// TODO: THIS IS SO BAD! BUT I MEAN I DON'T KNOW HOW TO DO IT ANY OTHER WAY!
+	// This is used to delete unused images
+	randomNum := rand.Intn(10)
+	if randomNum == 6 {
+		usedImage, err := api.store.GetAllPictures()
+		if err != nil {
+			fmt.Println(err)
+			c.Redirect(302, "/err")
+			return
+		}
+
+		if utils.DeleteUnused(usedImage) != nil {
+			fmt.Println(err)
+		}
+	}
+	fmt.Println(randomNum)
 
 	session, err := api.store.GetSessionById(sessionId)
 	if err != nil {
@@ -62,6 +81,12 @@ func (api *ApiServer) handleCustomizationPage(c *gin.Context) {
 	fmt.Println(userId)
 	if !ok {
 		c.Redirect(302, "/login")
+		return
+	}
+
+	profile, err := api.store.GetProfileByUser(userId.(string))
+	if err == nil {
+		templates.Protected(templates.Base("NoobSocial", templates.CustomizationPage(userId.(string), toUpdate, profile))).Render(c.Request.Context(), c.Writer)
 		return
 	}
 
