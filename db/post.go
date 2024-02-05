@@ -142,3 +142,26 @@ func (pq *PqInstance) UpdateTotalLikes(postId, exp string) error {
 
 	return nil
 }
+
+func (pq *PqInstance) GetComments(postId string) ([]views.Comment, error) {
+	query := pq.Builder.Select("posts.id", "posts.author", "posts.content", "posts.total_likes", "posts.comment_to", "posts.created_at", "contents.id", "contents.body", "contents.image", "contents.video", "contents.post_type", "contents.created_at", "users.username", "profile.id", "profile.full_name", "profile.bio", "profile.profile_pic").From("posts").Join("contents ON posts.content = contents.id").Join("users ON posts.author = users.id").Join("profile ON users.id = profile.user_id").Where(squirrel.Eq{"posts.comment_to": postId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	var comments []views.Comment
+
+	rows, err := query.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var comment views.Comment
+		err := rows.Scan(&comment.Post.Id, &comment.Post.Author, &comment.Post.Content, &comment.Post.TotalLikes, &comment.Post.CommentTo, &comment.Post.CreatedAt, &comment.Content.Id, &comment.Content.Body, &comment.Content.Image, &comment.Content.Video, &comment.Content.PostType, &comment.Content.CreatedAt, &comment.Username, &comment.Profile.Id, &comment.Profile.FullName, &comment.Profile.Bio, &comment.Profile.ProfilePic)
+		if err != nil {
+			return nil, err
+		}
+
+		comments = append(comments, comment)
+	}
+
+	return comments, nil
+}

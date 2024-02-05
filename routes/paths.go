@@ -47,7 +47,6 @@ func (api *ApiServer) handleHomePage(c *gin.Context) {
 			fmt.Println(err)
 		}
 	}
-	fmt.Println(randomNum)
 
 	session, err := api.store.GetSessionById(sessionId)
 	if err != nil {

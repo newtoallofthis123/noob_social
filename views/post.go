@@ -47,3 +47,10 @@ type Like struct {
 	PostId    string `json:"post_id"`
 	CreatedAt string `json:"created_at"`
 }
+
+type Comment struct {
+	Post     Post    `json:"post"`
+	Content  Content `json:"content"`
+	Profile  Profile `json:"profile"`
+	Username string  `json:"username"`
+}

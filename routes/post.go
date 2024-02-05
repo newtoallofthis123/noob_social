@@ -59,11 +59,14 @@ func (api *ApiServer) handleCreatePost(c *gin.Context) {
 	createPostReq.UserId = userID.(string)
 	createPostReq.Content.Id = content
 
+	var includeBack = false
+
 	// We are just creating a post, not a comment
 	// If we were creating a comment, we would set this to the post ID
 	commentId := c.PostForm("comment_id")
 	if commentId != "" {
 		createPostReq.CommentTo = commentId
+		includeBack = true
 	}
 
 	postIden, err := api.store.CreatePost(createPostReq)
@@ -78,8 +81,11 @@ func (api *ApiServer) handleCreatePost(c *gin.Context) {
 		c.String(500, err.Error())
 		return
 	}
-
-	c.Redirect(302, fmt.Sprintf("/%s/post/%s", user.Username, postIden))
+	if includeBack {
+		c.Redirect(302, fmt.Sprintf("/%s/post/%s?back=%s", user.Username, postIden, commentId))
+	} else {
+		c.Redirect(302, fmt.Sprintf("/%s/post/%s", user.Username, postIden))
+	}
 }
 
 func (api *ApiServer) handlePostPage(c *gin.Context) {
@@ -143,7 +149,13 @@ func (api *ApiServer) handlePostPage(c *gin.Context) {
 		return
 	}
 
-	templates.AppLayout(fmt.Sprintf("%s: \"%s\" on NoobSocial", name, reducedBody), user.Username, templates.PostPage(isLiked, username, post, content, profile, back)).Render(c.Request.Context(), c.Writer)
+	comments, err := api.store.GetComments(postIden)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	templates.AppLayout(fmt.Sprintf("%s: \"%s\" on NoobSocial", name, reducedBody), user.Username, templates.PostPage(false, isLiked, username, post, content, profile, comments, back)).Render(c.Request.Context(), c.Writer)
 }
 
 func (api *ApiServer) handleGetMdContent(c *gin.Context) {

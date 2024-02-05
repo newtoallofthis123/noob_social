@@ -35,6 +35,8 @@ type Store interface {
 	DeleteProfile(profileId string) error
 	GetProfileByUser(userId string) (views.Profile, error)
 	GetAllPictures() ([]string, error)
+
+	GetComments(postId string) ([]views.Comment, error)
 }
 
 type PqInstance struct {

@@ -4,24 +4,26 @@ import "github.com/newtoallofthis123/noob_social/views"
 import "fmt"
 import "github.com/newtoallofthis123/noob_social/utils"
 
-templ PostPage(isLiked bool, username string, post views.Post, content views.Content, profile views.Profile, prev string) {
-	<div class="flex flex-row justify-between items-center pb-2 px-3 dark:text-gray-300 font-semibold">
-		<div>
-			<a href={ templ.SafeURL(prev) }><i class="bi bi-arrow-left"></i> Back</a>
+templ PostPage(isComment, isLiked bool, username string, post views.Post, content views.Content, profile views.Profile, comments []views.Comment, prev string) {
+	if !isComment {
+		<div class="flex flex-row justify-between items-center pb-2 px-3 dark:text-gray-300 font-semibold">
+			<div>
+				<a href={ templ.SafeURL(prev) }><i class="bi bi-arrow-left"></i> Back</a>
+			</div>
 		</div>
-	</div>
+	}
 	<div class="w-full dark:bg-neutral-800 bg-neutral-100 border-y-2 border-neutral-800 dark:border-0 pt-2 pb-1">
 		<div class="px-4">
-			<div class="w-[60%] pb-3">
+			<div class="w-[60%] pb-2">
 				@UserInfo(username, profile)
 			</div>
-			<div class="postBody text-lg px-1" id="body"></div>
+			<div class="postBody text-md px-1" id={ "body_" + post.Id }></div>
 			if content.Image != "" {
 				<a data-fancybox="gallery" href={ templ.SafeURL(utils.STATICPATH + content.Image) } class="py-2">
-					<img src={ utils.STATICPATH + content.Image } alt={ content.Body }/>
+					<img class="py-1" src={ utils.STATICPATH + content.Image } alt={ content.Body }/>
 				</a>
 			}
-			<form class="hidden" hx-post="/md" hx-target="#body" hx-trigger="load">
+			<form class="hidden" hx-post="/md" hx-target={ "#body_" + post.Id } hx-trigger="load">
 				<input type="hidden" name="body" value={ content.Body }/>
 				<p id="rawdate">{ post.CreatedAt }</p>
 			</form>
@@ -30,32 +32,42 @@ templ PostPage(isLiked bool, username string, post views.Post, content views.Con
 				<div></div>
 			</div>
 		</div>
-		<div class="flex flex-row justify-between items-center border-t-2 border-neutral-600 px-4 pt-1 mt-2">
-			<div class="flex flex-row justify-center items-center gap-x-2">
-				if isLiked {
-					<form>
-						<input type="hidden" name="post_id" value={ post.Id }/>
-						<button hx-post="/unlikePost" class="w-6" hx-target="#message" hx-trigger="click"><i class="bi bi-heart-fill text-red-500"></i></button>
-					</form>
-				} else {
-					<form>
-						<input type="hidden" name="post_id" value={ post.Id }/>
-						<button hx-post="/likePost" class="w-6" hx-target="#message" hx-trigger="click"><i class="bi bi-heart"></i></button>
-					</form>
-				}
-				<p>
-					if post.TotalLikes == -1 {
-						0
+		if !isComment {
+			<div class="flex flex-row justify-between items-center border-t-2 border-neutral-600 px-4 pt-1 mt-2">
+				<div class="flex flex-row justify-center items-center gap-x-2">
+					if isLiked {
+						<form>
+							<input type="hidden" name="post_id" value={ post.Id }/>
+							<button hx-post="/unlikePost" class="w-4" hx-target="#message" hx-trigger="click"><i class="bi bi-heart-fill text-red-500"></i></button>
+						</form>
 					} else {
-						{ fmt.Sprintf("%d", post.TotalLikes) }
+						<form>
+							<input type="hidden" name="post_id" value={ post.Id }/>
+							<button hx-post="/likePost" class="w-4" hx-target="#message" hx-trigger="click"><i class="bi bi-heart"></i></button>
+						</form>
 					}
-				</p>
+					<p>
+						if post.TotalLikes == -1 {
+							0
+						} else {
+							{ fmt.Sprintf("%d", post.TotalLikes) }
+						}
+					</p>
+				</div>
+				<button class="text-xl w-8" onclick={ templ.ComponentScript{Call: fmt.Sprintf("updateCommentId('%s', '%s')", post.Id, username)} }>
+					<i class="bi bi-reply"></i>
+				</button>
+				<button></button>
 			</div>
-			<button class="text-xl w-8" onclick={ templ.ComponentScript{Call: fmt.Sprintf("updateCommentId('%s', '%s')", post.Id, username)} }>
-				<i class="bi bi-reply"></i>
-			</button>
-			<button></button>
-		</div>
+		}
+		if !isComment {
+			<p class="text-lg pr-2 font-bold py-2 px-1 border-t-2 dark:border-neutral-500">
+				Comments ({ fmt.Sprintf("%d", len(comments)) })
+			</p>
+		}
+	</div>
+	<div>
+		@Comments(comments)
 	</div>
 	<script>
 	 	let rawDate = document.getElementById("rawdate").innerText
@@ -80,4 +92,16 @@ templ PostPage(isLiked bool, username string, post views.Post, content views.Con
 			}
 		}
 	</script>
+}
+
+templ Comments(comments []views.Comment) {
+	<div>
+		for _, comment := range comments {
+			<div class="border-t-2 dark:border-neutral-500">
+				<a href={ templ.SafeURL(fmt.Sprintf("/%s/post/%s", comment.Username, comment.Post.Id)) }>
+					@PostPage(true, false, comment.Username, comment.Post, comment.Content, comment.Profile, nil, "")
+				</a>
+			</div>
+		}
+	</div>
 }

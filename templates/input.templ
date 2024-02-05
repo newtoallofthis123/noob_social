@@ -6,11 +6,11 @@ templ UserInfo(username string, profile views.Profile) {
 	<div class="p-0.5 flex flex-row justify-start justify-items-start items-center">
 		<div class="w-1/6">
 			<a hx-boost={ "/" + username } href={ templ.SafeURL("/" + username) }>
-				<img src={ "/avatar/" + username } class="w-12 h-10 pr-2 rounded-xl" alt=""/>
+				<img src={ "/avatar/" + username } class="h-8 pr-2 rounded-xl" alt=""/>
 			</a>
 		</div>
-		<div class="w-5/6 dark:text-neutral-100 text-neutral-950">
-			<h3>
+		<div class="w-5/6 dark:text-neutral-100 pb-0 text-neutral-950">
+			<h3 class="text-md">
 				{ profile.FullName }
 			</h3>
 			<p class="dark:text-neutral-200 text-neutral-800 text-sm">
