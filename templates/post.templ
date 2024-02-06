@@ -12,14 +12,14 @@ templ PostPage(isComment, isLiked bool, username string, post views.Post, conten
 			</div>
 		</div>
 	}
-	<div class="w-full dark:bg-neutral-800 bg-neutral-100 border-y-2 border-neutral-800 dark:border-0 pt-2 pb-1">
+	<div class="w-full dark:bg-neutral-800 bg-neutral-100 border-t-2 border-neutral-800 dark:border-0 pt-2 pb-1">
 		<div class="px-4">
 			<div class="w-[60%] pb-2">
 				@UserInfo(username, profile)
 			</div>
 			<div class="postBody text-md px-1" id={ "body_" + post.Id }></div>
 			if content.Image != "" {
-				<a data-fancybox="gallery" href={ templ.SafeURL(utils.STATICPATH + content.Image) } class="py-2">
+				<a data-fancybox={ "gallery" + post.Id } href={ templ.SafeURL(utils.STATICPATH + content.Image) } class="py-2">
 					<img class="py-1" src={ utils.STATICPATH + content.Image } alt={ content.Body }/>
 				</a>
 			}
@@ -98,9 +98,8 @@ templ Comments(comments []views.Comment) {
 	<div>
 		for _, comment := range comments {
 			<div class="border-t-2 dark:border-neutral-500">
-				<a href={ templ.SafeURL(fmt.Sprintf("/%s/post/%s", comment.Username, comment.Post.Id)) }>
-					@PostPage(true, false, comment.Username, comment.Post, comment.Content, comment.Profile, nil, "")
-				</a>
+				@PostPage(true, false, comment.Username, comment.Post, comment.Content, comment.Profile, nil, comment.Post.Id)
+			    <a hx-boost={ string(templ.SafeURL("/" + comment.Username + "/post/" + comment.Post.Id)) } href={ templ.SafeURL("/" + comment.Username + "/post/" + comment.Post.Id) } class="text-sm dark:text-neutral-400 pl-2"> View Comment <i class="bi bi-arrow-right"></i> </a>
 			</div>
 		}
 	</div>

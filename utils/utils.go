@@ -1,6 +1,8 @@
 package utils
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 // GenerateOtp generates a random number of length len
 func GenerateOtp(len int) string {

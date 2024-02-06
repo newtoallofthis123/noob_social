@@ -12,7 +12,7 @@ type ApiServer struct {
 	store      db.Store
 }
 
-// Returns a new Tested ApiServer.
+// New Returns a new Tested ApiServer.
 func New() *ApiServer {
 	listenAddr := utils.ReadEnv().ListenAddr
 	config := utils.ReadConfig()
@@ -24,7 +24,7 @@ func New() *ApiServer {
 	return &ApiServer{listenAddr, store}
 }
 
-// Starts the server.
+// Start Starts the server.
 func (api *ApiServer) Start() error {
 	r := gin.Default()
 
@@ -70,7 +70,6 @@ func (api *ApiServer) Start() error {
 	// authenticated routes
 	auth := r.Group("/")
 	auth.Use(api.authMiddleware())
-
 	auth.POST("/createPost", api.handleCreatePost)
 	auth.GET("/customization", api.handleCustomizationPage)
 	auth.POST("/customizeUser", api.handleUserCustomize)

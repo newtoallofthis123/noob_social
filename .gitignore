@@ -24,3 +24,5 @@ node_modules
 
 # Static user files
 static/assets/*
+
+/.idea

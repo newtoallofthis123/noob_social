@@ -1,7 +1,7 @@
 BINARY_NAME=noob_social
 
 build: 
-	@templ generate && cd cmd && go build -o ../bin/$(BINARY_NAME)
+	@templ generate && npx postcss static/input.css -o static/output_prod_styles.css && cd cmd && go build -o ../bin/$(BINARY_NAME)
 
 run: build
 	@./bin/$(BINARY_NAME)

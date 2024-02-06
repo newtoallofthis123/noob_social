@@ -25,6 +25,7 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang-module/carbon/v2 v2.3.4 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
+	github.com/hbollon/go-edlib v1.6.0 // indirect
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.6 // indirect

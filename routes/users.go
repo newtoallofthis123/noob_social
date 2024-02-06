@@ -96,7 +96,7 @@ func (api *ApiServer) handleOtpLogin(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("session_id", sessionId, 60*60*12, "/", "localhost", false, true)
+	c.SetCookie("session_id", sessionId, 60*60*24*7, "/", "localhost", false, true)
 
 	err = api.store.DeleteOtp(otpId)
 	if err != nil {
@@ -172,10 +172,13 @@ func (api *ApiServer) handleUserSignUp(c *gin.Context) {
 func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 	bio := c.PostForm("bio")
 	fullName := c.PostForm("full_name")
-	var finalName string = ""
+	var finalName = ""
 	profilePic, err := c.FormFile("profile_picture")
 	if err == nil {
-		c.SaveUploadedFile(profilePic, utils.FILEPATH+profilePic.Filename)
+		err := c.SaveUploadedFile(profilePic, utils.FILEPATH+profilePic.Filename)
+		if err != nil {
+			return
+		}
 
 		finalName, err = utils.CheckPicture(profilePic.Filename, true)
 		if err != nil {
@@ -191,10 +194,13 @@ func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 		finalName = existingPic
 	}
 
-	var bannerName string = ""
+	var bannerName = ""
 	bannerPic, err := c.FormFile("banner")
 	if err == nil {
-		c.SaveUploadedFile(bannerPic, utils.FILEPATH+bannerPic.Filename)
+		err := c.SaveUploadedFile(bannerPic, utils.FILEPATH+bannerPic.Filename)
+		if err != nil {
+			return
+		}
 
 		bannerName, err = utils.CheckPicture(bannerPic.Filename, false)
 		if err != nil {
