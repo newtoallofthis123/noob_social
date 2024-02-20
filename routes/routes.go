@@ -43,11 +43,6 @@ func (api *ApiServer) Start() error {
 	// The home page
 	r.GET("/", api.handleHomePage)
 
-	// Test handler for creating a user
-	r.GET("/create-user", api.handleCreateUser)
-	// Test handler for sending an OTP
-	r.GET("/send-otp", api.handleSendOTP)
-
 	r.GET("/login", api.handleLoginPage)
 	r.GET("/otp-login", api.handleOtpPage)
 	r.GET("/sign-up", api.handleSignUpPage)
@@ -63,6 +58,7 @@ func (api *ApiServer) Start() error {
 	r.GET("/defaultAvatar/:u", handleDefaultAvatar)
 	r.GET("/avatar/:u", api.handleGetUserAvatar)
 	r.POST("/md", api.handleGetMdContent)
+	r.GET("/banner/:username", api.handleUserBanner)
 
 	// Some JSON routes for testing
 	r.GET("/json/:username/posts", api.handleJsonUserPosts)

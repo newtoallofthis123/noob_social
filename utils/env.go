@@ -23,6 +23,8 @@ type Config struct {
 func ReadEnv() Env {
 	godotenv.Load(".env")
 
+	godotenv.Load(".env")
+
 	return Env{
 		ConnString:   constructDbString(),
 		ListenAddr:   getEnv("LISTEN_ADDR"),

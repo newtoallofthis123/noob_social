@@ -1,50 +1,18 @@
 package routes
 
 import (
+	"bytes"
 	"fmt"
+	"image/png"
 
+	"github.com/anthonynsimon/bild/transform"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/newtoallofthis123/noob_social/email"
+	"github.com/newtoallofthis123/noob_social/templates"
 	"github.com/newtoallofthis123/noob_social/utils"
 	"github.com/newtoallofthis123/noob_social/views"
 )
-
-func (api *ApiServer) handleCreateUser(c *gin.Context) {
-	test := views.CreateUserReq{
-		Username: "noob",
-		Email:    "noob@duck.com",
-	}
-
-	user, err := api.store.CreateUser(test)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(200, gin.H{
-		"user": user,
-	})
-}
-
-func (api *ApiServer) handleSendOTP(c *gin.Context) {
-	to := c.Query("to")
-
-	err := email.SendOtp(utils.GenerateOtp(8), "test", to)
-
-	if err != nil {
-		c.JSON(500, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(200, gin.H{
-		"message": "Sent OTP",
-	})
-}
 
 func (api *ApiServer) handleEmailLogin(c *gin.Context) {
 	userEmail := c.PostForm("email")
@@ -276,9 +244,15 @@ func (api *ApiServer) handleGetUserAvatar(c *gin.Context) {
 }
 
 func (api *ApiServer) handleProfilePage(c *gin.Context) {
-	_, ok := c.Get("user_id")
+	loggedUserId, ok := c.Get("user_id")
 	if !ok {
 		c.Redirect(302, "/login")
+		return
+	}
+
+	loggedUser, err := api.store.GetUserById(loggedUserId.(string))
+	if err != nil {
+		c.String(500, err.Error())
 		return
 	}
 
@@ -289,10 +263,58 @@ func (api *ApiServer) handleProfilePage(c *gin.Context) {
 		return
 	}
 
-	_, err = api.store.GetPostsByUser(user.Id.String())
+	posts, err := api.store.GetPostsByUser(user.Id.String())
 	if err != nil {
 		c.String(500, err.Error())
 		return
 	}
 
+	likes, err := api.store.GetUserLikes(user.Id.String())
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	profile, err := api.store.GetProfileByUser(user.Id.String())
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	templates.AppLayout(fmt.Sprintf("%s's Profile", user.Username), loggedUser.Username, templates.ProfilePage(likes, posts, username, profile)).Render(c.Request.Context(), c.Writer)
+}
+
+func (api *ApiServer) handleUserBanner(c *gin.Context) {
+	username := c.Params.ByName("username")
+
+	user, err := api.store.GetUserByUsername(username)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	profile, err := api.store.GetProfileByUser(user.Id.String())
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	imageFile, err := utils.GetImageFile(profile.Banner)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	croppedImage := transform.Resize(imageFile, 1080, 320, transform.Linear)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	var buff bytes.Buffer
+	if png.Encode(&buff, croppedImage) != nil {
+		c.String(500, "Error encoding image")
+	}
+
+	c.Data(200, "image/png", buff.Bytes())
 }

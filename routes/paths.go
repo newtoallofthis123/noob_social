@@ -32,7 +32,7 @@ func (api *ApiServer) handleHomePage(c *gin.Context) {
 		return
 	}
 
-	// TODO: THIS IS SO BAD! BUT I MEAN I DON'T KNOW HOW TO DO IT ANY OTHER WAY!
+	// FIX: THIS IS SO BAD! BUT I MEAN I DON'T KNOW HOW TO DO IT ANY OTHER WAY!
 	// This is used to delete unused images
 	randomNum := rand.Intn(10)
 	if randomNum == 6 {
