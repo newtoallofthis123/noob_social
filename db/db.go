@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/Masterminds/squirrel"
 	_ "github.com/lib/pq"
@@ -37,6 +38,7 @@ type Store interface {
 	GetAllPictures() ([]string, error)
 
 	GetComments(postId string) ([]views.Comment, error)
+	GetUserLikes(userId string) ([]views.Like, error)
 }
 
 type PqInstance struct {
@@ -55,6 +57,7 @@ func New() (*PqInstance, error) {
 		return nil, err
 	}
 
+	fmt.Println("Connected to database")
 	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Question)
 
 	return &PqInstance{db, &psql}, err

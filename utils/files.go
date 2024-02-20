@@ -97,6 +97,20 @@ func GetImage(name string) (bytes.Buffer, error) {
 	return imageBuff, nil
 }
 
+func GetImageFile(name string) (image.Image, error) {
+	file, err := os.Open(FILEPATH + name)
+	if err != nil {
+		return nil, err
+	}
+
+	// convert file to image.Image
+	fileImage, _, err := image.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return fileImage, nil
+}
 func DeleteUnused(used []string) error {
 	files, err := os.ReadDir(FILEPATH)
 	if err != nil {

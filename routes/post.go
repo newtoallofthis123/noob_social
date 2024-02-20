@@ -82,7 +82,7 @@ func (api *ApiServer) handleCreatePost(c *gin.Context) {
 		return
 	}
 	if includeBack {
-		c.Redirect(302, fmt.Sprintf("/%s/post/%s?back=%s", user.Username, postIden, commentId))
+		c.Redirect(302, fmt.Sprintf("/%s/post/%s?back=%s", user.Username, postIden, fmt.Sprintf("%s/post/%s", user.Username, commentId)))
 	} else {
 		c.Redirect(302, fmt.Sprintf("/%s/post/%s", user.Username, postIden))
 	}
@@ -95,6 +95,17 @@ func (api *ApiServer) handlePostPage(c *gin.Context) {
 	post, err := api.store.GetPost(postIden)
 	if err != nil {
 		c.String(500, err.Error())
+		return
+	}
+
+	postUser, err := api.store.GetUserById(post.Author)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	if postUser.Username != username {
+		c.String(404, "Post not found")
 		return
 	}
 
@@ -140,7 +151,22 @@ func (api *ApiServer) handlePostPage(c *gin.Context) {
 
 	back := c.Query("back")
 	if back == "" {
-		back = "/"
+		commentId := post.CommentTo
+		if commentId != "" {
+			comment, err := api.store.GetPost(commentId)
+			if err != nil {
+				back = "/"
+			} else {
+				author, err := api.store.GetUserById(comment.Author)
+				if err != nil {
+					back = "/"
+				} else {
+					back = fmt.Sprintf("%s/post/%s", author.Username, commentId)
+				}
+			}
+		} else {
+			back = "/"
+		}
 	}
 
 	user, err := api.store.GetUserById(user_id.(string))

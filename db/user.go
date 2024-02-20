@@ -246,3 +246,27 @@ func (pq *PqInstance) GetAllPictures() ([]string, error) {
 
 	return toReturn, nil
 }
+
+func (pq *PqInstance) GetUserLikes(userId string) ([]views.Like, error) {
+	query := pq.Builder.Select("*").From("likes").Where(squirrel.Eq{"user_id": userId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	rows, err := query.Query()
+	if err != nil {
+		return []views.Like{}, err
+	}
+
+	toReturn := []views.Like{}
+
+	for rows.Next() {
+		like := views.Like{}
+
+		err := rows.Scan(&like.Id, &like.UserId, &like.PostId, &like.CreatedAt)
+		if err != nil {
+			return []views.Like{}, err
+		}
+
+		toReturn = append(toReturn, like)
+	}
+
+	return toReturn, nil
+}
