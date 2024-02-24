@@ -10,17 +10,14 @@ templ LoginPage() {
 					Enter Your Email to Login
 				</p>
 				<input
- 					type="text"
- 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
- 					autocomplete="off"
- 					name="email"
- 					placeholder="Email"
- 					id="email"
+					type="text"
+					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+					autocomplete="off"
+					name="email"
+					placeholder="Email"
+					id="email"
 				/>
-				<button
- 					class="bg-black text-white p-2 w-2/4 font-semibold rounded-md"
- 					type="submit"
-				>
+				<button class="bg-black text-white p-2 w-2/4 font-semibold rounded-md" type="submit">
 					🔓️Login
 				</button>
 			</form>
@@ -38,22 +35,15 @@ templ OtpLogin(otp_id string) {
 					Enter Your OTP to Login
 				</p>
 				<input
- 					type="text"
- 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
- 					autocomplete="off"
- 					name="otp"
- 					placeholder="OTP"
- 					id="otp"
+					type="text"
+					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+					autocomplete="off"
+					name="otp"
+					placeholder="OTP"
+					id="otp"
 				/>
-				<input
- 					type="hidden"
- 					name="otp_id"
- 					value={ otp_id }
-				/>
-				<button
- 					class="bg-black text-white p-2 w-2/4 font-semibold rounded-md"
- 					type="submit"
-				>
+				<input type="hidden" name="otp_id" value={ otp_id }/>
+				<button class="bg-black text-white p-2 w-2/4 font-semibold rounded-md" type="submit">
 					🥹 It is me!
 				</button>
 			</form>
@@ -71,29 +61,26 @@ templ SignUpPage(email string) {
 					Enter Your Email
 				</p>
 				<input
- 					type="text"
- 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
- 					autocomplete="off"
- 					name="email"
- 					value={ email }
- 					placeholder="Email"
- 					id="email"
+					type="text"
+					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+					autocomplete="off"
+					name="email"
+					value={ email }
+					placeholder="Email"
+					id="email"
 				/>
 				<p>
 					Choose a cool username
 				</p>
 				<input
- 					type="text"
- 					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
- 					autocomplete="off"
- 					name="username"
- 					placeholder="Username"
- 					id="username"
+					type="text"
+					class="border-2 border-neutral-600 p-1 dark:bg-neutral-900 rounded-md"
+					autocomplete="off"
+					name="username"
+					placeholder="Username"
+					id="username"
 				/>
-				<button
- 					class="bg-black text-white p-2 w-2/4 font-semibold rounded-md"
- 					type="submit"
-				>
+				<button class="bg-black text-white p-2 w-2/4 font-semibold rounded-md" type="submit">
 					SignUp
 				</button>
 			</form>
