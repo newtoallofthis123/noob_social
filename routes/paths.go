@@ -2,11 +2,9 @@ package routes
 
 import (
 	"fmt"
-	"math/rand"
 
 	"github.com/gin-gonic/gin"
 	"github.com/newtoallofthis123/noob_social/templates"
-	"github.com/newtoallofthis123/noob_social/utils"
 	"github.com/newtoallofthis123/noob_social/views"
 )
 
@@ -32,21 +30,21 @@ func (api *ApiServer) handleHomePage(c *gin.Context) {
 		return
 	}
 
-	// FIX: THIS IS SO BAD! BUT I MEAN I DON'T KNOW HOW TO DO IT ANY OTHER WAY!
-	// This is used to delete unused images
-	randomNum := rand.Intn(10)
-	if randomNum == 6 {
-		usedImage, err := api.store.GetAllPictures()
-		if err != nil {
-			fmt.Println(err)
-			c.Redirect(302, "/err")
-			return
-		}
-
-		if utils.DeleteUnused(usedImage) != nil {
-			fmt.Println(err)
-		}
-	}
+	// // FIX: THIS IS SO BAD! BUT I MEAN I DON'T KNOW HOW TO DO IT ANY OTHER WAY!
+	// // This is used to delete unused images
+	// randomNum := rand.Intn(10)
+	// if randomNum == 6 {
+	// 	usedImage, err := api.store.GetAllPictures()
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 		c.Redirect(302, "/err")
+	// 		return
+	// 	}
+	//
+	// 	if utils.DeleteUnused(usedImage) != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// }
 
 	session, err := api.store.GetSessionById(sessionId)
 	if err != nil {

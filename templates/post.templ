@@ -40,14 +40,16 @@ if !isComment {
             if isLiked {
             <form>
                 <input type="hidden" name="post_id" value={ post.Id } />
-                <button hx-post="/unlikePost" class="w-4" hx-target="#message" hx-trigger="click"><i
-                        class="bi bi-heart-fill text-red-500"></i></button>
+                <button hx-post="/unlikePost" class="w-4" hx-target="#message" hx-trigger="click">
+                    <i class="bi bi-heart-fill text-red-500"></i>
+                </button>
             </form>
             } else {
             <form>
                 <input type="hidden" name="post_id" value={ post.Id } />
-                <button hx-post="/likePost" class="w-4" hx-target="#message" hx-trigger="click"><i
-                        class="bi bi-heart"></i></button>
+                <button hx-post="/likePost" class="w-4" hx-target="#message" hx-trigger="click">
+                    <i class="bi bi-heart"></i>
+                </button>
             </form>
             }
             <p>
@@ -102,11 +104,12 @@ if !isComment {
 templ Comments(parentId string, username string, comments []views.Comment) {
 <div>
     for _, comment := range comments {
-    <div class="border-t-2 dark:border-neutral-500 "> 
+    <div class="border-t-2 dark:border-neutral-500 ">
         @PostPage(true, false, comment.Username, comment.Post, comment.Content, comment.Profile, nil, comment.Post.Id)
         <a hx-boost={ string(templ.SafeURL("/" + comment.Username + "/post/" + comment.Post.Id)) } href={
             templ.SafeURL("/" + comment.Username + "/post/" + comment.Post.Id + "?back=" + username + "/post/" +
-            parentId) } class="text-sm dark:text-neutral-400 pl-4 underline">View Comment <i class="bi bi-arrow-right"></i> </a>
+            parentId) } class="text-sm dark:text-neutral-400 pl-4 underline">View Comment <i
+                class="bi bi-arrow-right"></i> </a>
     </div>
     }
 </div>

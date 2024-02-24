@@ -1,26 +1,135 @@
 package templates
 
 import "github.com/newtoallofthis123/noob_social/views"
+import "github.com/newtoallofthis123/noob_social/utils"
 
 templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, profile views.Profile) {
+<div>
     <div>
-        <div>
-            <img src={ "/banner/" + username } alt="" />
-        </div>
-        <div class="flex flex-row justify-between">
-            <div class="w-2/5">
-                <div class="px-3 pt-2 pb-1">
-                    <img src={ "/avatar/" + username } class="w-12 rounded-full" alt="Profile Picture" />
-                </div>
-                <div class="px-3 pt-2 pb-1">
-                    <h1 class="font-bold text-xl pb-1">{ profile.FullName }</h1>
-                    <h1>{ "@" + username }</h1>
-                    <p>{ profile.Bio }</p>
-                </div>
+        <img src={ "/banner/" + username } alt="" />
+    </div>
+    <div class="flex flex-row justify-between">
+        <div class="w-2/5">
+            <div class="px-3 pt-2 pb-1">
+                <img src={ "/avatar/" + username } class="w-12 rounded-full" alt="Profile Picture" />
             </div>
-            <div class="w-3/5">
-                
+            <div class="px-3 pt-2 pb-1">
+                <h1 class="font-bold text-xl pb-1">{ profile.FullName }</h1>
+                <h1>{ "@" + username }</h1>
+                <p>{ profile.Bio }</p>
             </div>
         </div>
     </div>
+    <div id="tabbar" class="border-t-2 border-neutral-800 dark:border-0 flex flex-row justify-around items-center">
+        <div class="py-2"><button id="postsBtn" activates="posts">Posts</button></div>
+        <div class="py-2"><button id="repliesBtn" activates="replies">Replies</button></div>
+    </div>
+    <div id="posts">
+        for _, post := range posts {
+        if post.Post.CommentTo == "" {
+        <div class="w-full dark:bg-neutral-800 bg-neutral-100 border-t-2 border-neutral-800 dark:border-0 pt-2 pb-1">
+            <div class="px-4">
+                <div class="w-[60%] pb-2">
+                    @UserInfo(username, profile)
+                </div>
+                <div class="postBody text-md px-1" id={ "body_" + post.Post.Id }></div>
+                if post.Content.Image != "" {
+                <a data-fancybox={ "gallery" + post.Post.Id } href={ templ.SafeURL(utils.STATICPATH +
+                    post.Content.Image) } class="py-2">
+                    <img class="py-1" src={ utils.STATICPATH + post.Content.Image } alt={ post.Content.Body } />
+                </a>
+                }
+                <form class="hidden" hx-post="/md" hx-target={ "#body_" + post.Post.Id } hx-trigger="load">
+                    <input type="hidden" name="body" value={ post.Content.Body } />
+                    <p id={ "rawdate_" + post.Post.Id }>{ post.Post.CreatedAt }</p>
+                </form>
+                <div class="pt-3">
+                    <div>
+                        <p class="dark:text-neutral-400 text-neutral-600 text-sm" id={ "date_" + post.Post.Id }></p>
+                    </div>
+                </div>
+                <a href={ templ.SafeURL("/" + username + "/post/" + post.Post.Id + "?back=" + username) }
+                    class="text-sm dark:text-neutral-400 pl-0.5 underline">
+                    View Comment
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        }
+        }
+    </div>
+    <div id="replies" style="display: none;">
+        for _, post := range posts {
+        if post.Post.CommentTo != "" {
+        <div class="w-full dark:bg-neutral-800 bg-neutral-100 border-t-2 border-neutral-800 dark:border-0 pt-2 pb-1">
+            <div class="px-4">
+                <div class="pb-3">
+                    <i class="bi bi-arrow-down"></i> Reply for
+                    <a href={ templ.SafeURL("/" + username + "/post/" + post.Post.CommentTo + "?back=" + username) }
+                        class="underline">
+                        { post.Post.CommentTo }
+                    </a>
+                </div>
+                <div class="w-[60%] pb-2">
+                    @UserInfo(username, profile)
+                </div>
+                <div class="postBody text-md px-1" id={ "body_" + post.Post.Id }></div>
+                if post.Content.Image != "" {
+                <a data-fancybox={ "gallery" + post.Post.Id } href={ templ.SafeURL(utils.STATICPATH +
+                    post.Content.Image) } class="py-2">
+                    <img class="py-1" src={ utils.STATICPATH + post.Content.Image } alt={ post.Content.Body } />
+                </a>
+                }
+                <form class="hidden" hx-post="/md" hx-target={ "#body_" + post.Post.Id } hx-trigger="load">
+                    <input type="hidden" name="body" value={ post.Content.Body } />
+                    <p id={ "rawdate_" + post.Post.Id }>{ post.Post.CreatedAt }</p>
+                </form>
+                <div class="pt-3">
+                    <div>
+                        <p class="dark:text-neutral-400 text-neutral-600 text-sm" id={ "date_" + post.Post.Id }></p>
+                    </div>
+                </div>
+                <a href={ templ.SafeURL("/" + username + "/post/" + post.Post.Id + "?back=" + username) }
+                    class="text-sm dark:text-neutral-400 pl-0.5 underline">
+                    View Comment
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        }
+        }
+    </div>
+</div>
+<script>
+    let rawDates = document.querySelectorAll('[id^="rawdate_"]')
+    let dates = document.querySelectorAll('[id^="date_"]')
+    for (let i = 0; i < rawDates.length; i++) {
+        let d = new Date(rawDates[i].innerText)
+        let options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'}
+        dates[i].innerText = d.toLocaleDateString(undefined, options)
+    }
+    //check localstorage for posts or replies
+    let tab = localStorage.getItem('tab')
+    if (tab == 'posts') {
+        document.getElementById('posts').style.display = 'block'
+        document.getElementById('replies').style.display = 'none'
+    } else if (tab == 'replies') {
+        document.getElementById('posts').style.display = 'none'
+        document.getElementById('replies').style.display = 'block'
+    }
+    let postsBtn = document.getElementById('postsBtn')
+    let repliesBtn = document.getElementById('repliesBtn')
+    let posts = document.getElementById('posts')
+    let replies = document.getElementById('replies')
+    postsBtn.addEventListener('click', () => {
+        posts.style.display = 'block'
+        replies.style.display = 'none'
+        localStorage.setItem('tab', 'posts')
+    })
+    repliesBtn.addEventListener('click', () => {
+        posts.style.display = 'none'
+        replies.style.display = 'block'
+        localStorage.setItem('tab', 'replies')
+    })
+</script>
 }
