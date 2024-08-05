@@ -1,94 +1,102 @@
 package templates
 
 templ Base(title string, body templ.Component) {
-	<!DOCTYPE html>
-	<html lang="en">
-		@Header(title)
-		// @Nav(title, false)
-		<body class="dark:bg-neutral-900 dark:text-neutral-200 py-5">
-			<div class="flex flex-col justify-center items-center">
-				<div class="w-[85%]">
-					@body
-				</div>
-			</div>
-		</body>
-		<script>
-			let root = document.documentElement
+<!DOCTYPE html>
+<html lang="en">
+@Header(title)
+// @Nav(title, false)
 
-			if (localStorage.getItem("theme") === "whatever" || localStorage.getItem("theme") === null) {
-				let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-				localStorage.setItem("theme", "whatever")
-				if (theme === "dark") {
-					root.classList.add("dark")
-				} else {
-					root.classList.remove("dark")
-				}
-			} else{
-				localStorage.getItem("theme") === "dark" ? root.classList.add("dark") : root.classList.remove("dark")
-			}
-		</script>
-	</html>
+<body class="dark:bg-neutral-900 dark:text-neutral-200 py-5">
+    <div class="flex flex-col justify-center items-center">
+        <div class="w-[85%]">
+            @body
+        </div>
+    </div>
+</body>
+<script>
+    let root = document.documentElement
+
+    if (localStorage.getItem("theme") === "whatever" || localStorage.getItem("theme") === null) {
+        let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+        localStorage.setItem("theme", "whatever")
+        if (theme === "dark") {
+            root.classList.add("dark")
+        } else {
+            root.classList.remove("dark")
+        }
+    } else {
+        localStorage.getItem("theme") === "dark" ? root.classList.add("dark") : root.classList.remove("dark")
+    }
+</script>
+
+</html>
 }
 
 templ Raw(title string, body templ.Component) {
-	<!DOCTYPE html>
-	<html lang="en">
-		@Header(title)
-		<body>
-			@body
-		</body>
-	</html>
+<!DOCTYPE html>
+<html lang="en">
+@Header(title)
+
+<body>
+    @body
+</body>
+
+</html>
 }
 
 templ Protected(body templ.Component) {
-	@body
-	<script>
-		authRes = fetch("/checkSession").then(res => {if(res.status !== 200) {
-        window.location.href = "/login"
-    	}})
-	</script>
+@body
+<script>
+    authRes = fetch("/checkSession").then(res => {
+        if (res.status !== 200) {
+            window.location.href = "/login"
+        }
+    })
+</script>
 }
 
 templ AntiProtected(title string, body templ.Component) {
-	@Base(title, body)
-	<script>
-		authRes = fetch("/checkSession").then(res => {if(res.status === 200) {
-		window.location.href = "/"
-		}})
-	</script>
+@Base(title, body)
+<script>
+    authRes = fetch("/checkSession").then(res => {
+        if (res.status === 200) {
+            window.location.href = "/"
+        }
+    })
+</script>
 }
 
 templ AppLayout(title,username string, body templ.Component) {
-	@Base(title, AppLayoutIndex(username, body))
+@Base(title, AppLayoutIndex(username, body))
 }
 
 templ AppLayoutIndex(username string, body templ.Component) {
-	<div class="flex flex-between flex-row">
-		<div class="w-[25%]">
-			<div class="px-10 flex justify-center items-center">
-				@CreatePostInput(username)
-			</div>
-			<div>
-				<h3 class="text-xl pb-2">
-					Event Console
-				</h3>
-				<p class="text-sm">
-					Shows the status of your browser's requests. <a class="underline" href="/about/console">Know More</a>
-				</p>
-				<div>
-					<p id="message"></p>
-				</div>
-			</div>
-		</div>
-		<div class="w-[50%] mx-8 dark:bg-neutral-700 bg-neutral-50 border-2 border-neutral-800 dark:border-0 rounded-md">
-			@body
-		</div>
-		<div class="w-[25%]">
-			@SideBar(username)
-		</div>
-	</div>
+<div class="flex flex-between flex-row">
+    <div class="w-[25%]">
+        <div class="px-10 flex justify-center items-center">
+            @CreatePostInput(username)
+        </div>
+        <div>
+            <h3 class="text-xl pb-2">
+                Event Console
+            </h3>
+            <p class="text-sm">
+                Shows the status of your browser's requests. <a class="underline" href="/about/console">Know More</a>
+            </p>
+            <div>
+                <p id="message"></p>
+            </div>
+        </div>
+    </div>
+    <div class="w-[50%] mx-8 dark:bg-neutral-700 bg-neutral-50 border-2 border-neutral-800 dark:border-0 rounded-md">
+        @body
+    </div>
+    <div class="w-[25%]">
+        @SideBar(username)
+    </div>
+</div>
 }
 
 templ SideBar(username string) {
-	<div></div>
+<div></div>
 }

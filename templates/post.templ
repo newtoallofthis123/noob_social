@@ -108,7 +108,7 @@ templ Comments(parentId string, username string, comments []views.Comment) {
         @PostPage(true, false, comment.Username, comment.Post, comment.Content, comment.Profile, nil, comment.Post.Id)
         <a hx-boost={ string(templ.SafeURL("/" + comment.Username + "/post/" + comment.Post.Id)) } href={
             templ.SafeURL("/" + comment.Username + "/post/" + comment.Post.Id + "?back=" + username + "/post/" +
-            parentId) } class="text-sm dark:text-neutral-400 pl-4 underline">View Comment <i
+            parentId) } class="text-sm dark:text-neutral-400 pl-4 underline">View Comments <i
                 class="bi bi-arrow-right"></i> </a>
     </div>
     }

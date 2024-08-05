@@ -50,7 +50,7 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
                 </div>
                 <a href={ templ.SafeURL("/" + username + "/post/" + post.Post.Id + "?back=" + username) }
                     class="text-sm dark:text-neutral-400 pl-0.5 underline">
-                    View Comment
+                    View Comments
                     <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
@@ -91,7 +91,7 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
                 </div>
                 <a href={ templ.SafeURL("/" + username + "/post/" + post.Post.Id + "?back=" + username) }
                     class="text-sm dark:text-neutral-400 pl-0.5 underline">
-                    View Comment
+                    View Comments
                     <i class="bi bi-arrow-right"></i>
                 </a>
             </div>

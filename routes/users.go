@@ -162,7 +162,7 @@ func (api *ApiServer) handleUserCustomize(c *gin.Context) {
 		finalName = existingPic
 	}
 
-	var bannerName = ""
+	bannerName := ""
 	bannerPic, err := c.FormFile("banner")
 	if err == nil {
 		err := c.SaveUploadedFile(bannerPic, utils.FILEPATH+bannerPic.Filename)
@@ -306,10 +306,6 @@ func (api *ApiServer) handleUserBanner(c *gin.Context) {
 	}
 
 	croppedImage := transform.Resize(imageFile, 1080, 320, transform.Linear)
-	if err != nil {
-		c.String(500, err.Error())
-		return
-	}
 
 	var buff bytes.Buffer
 	if png.Encode(&buff, croppedImage) != nil {

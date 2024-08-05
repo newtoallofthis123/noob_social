@@ -1,31 +1,34 @@
 package templates
 
 templ SendOTP(otp string) {
-    <style>
-        div {
-            padding: 12px;
-        }
-        h3{
-            font-size: 28px;
-            font-weight: 700;
-        }
-        p{
-            font-size: 18px;
-            font-weight: 400;
-        }
-        span{
-            font-size: 24px;
-            font-weight: 700;
-            color: #007bff;
-            font-family: 'Courier New', Courier, monospace;
-        }
-    </style>
-	<div>
-		<h3>
-			OTP for logging into your NoobSocial account
-		</h3>
-		<p>
-			Hey there, your OTP is <span>{ otp }</span>
-		</p>
-	</div>
+<style>
+    div {
+        padding: 12px;
+    }
+
+    h3 {
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    p {
+        font-size: 18px;
+        font-weight: 400;
+    }
+
+    span {
+        font-size: 24px;
+        font-weight: 700;
+        color: #007bff;
+        font-family: 'Courier New', Courier, monospace;
+    }
+</style>
+<div>
+    <h3>
+        OTP for logging into your NoobSocial account
+    </h3>
+    <p>
+        Hey there, your OTP is <span>{ otp }</span>
+    </p>
+</div>
 }
