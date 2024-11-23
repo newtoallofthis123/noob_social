@@ -10,6 +10,8 @@ Self Hosted, Open Source, and Free. Not only that, it is written using the lates
 
 So what are you waiting for? Get started today!
 
+![Screenshot](screenshot.png)
+
 ## Under Development
 
 I am making this project to have a social media platform for just me and my friends. However, one more reason is to use the Go and HTMX stack to make a fast and efficient social media platform that is also easy to deploy and maintain.
