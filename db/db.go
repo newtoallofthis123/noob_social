@@ -39,6 +39,10 @@ type Store interface {
 
 	GetComments(postId string) ([]views.Comment, error)
 	GetUserLikes(userId string) ([]views.Like, error)
+
+	CreateFollow(userId, followId string) error
+	GetUserFollowing(userId string) ([]views.User, error)
+	DoesUserFollow(userId, followId string) (bool, error)
 }
 
 type PqInstance struct {

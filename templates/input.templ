@@ -31,7 +31,7 @@ templ CreatePostInput(username string) {
     </form>
     <div class="w-full p-0.5 flex flex-row justify-center items-center">
         <div class="w-1/6">
-            <a href="/profile">
+            <a href={ templ.SafeURL("/" + username) }>
                 <img src={ "/avatar/" + username } class="w-12 h-10 pr-2 rounded-xl" alt="" />
             </a>
         </div>

@@ -269,19 +269,33 @@ func (api *ApiServer) handleProfilePage(c *gin.Context) {
 		return
 	}
 
+	for i, j := 0, len(posts)-1; i < j; i, j = i+1, j-1 {
+		posts[i], posts[j] = posts[j], posts[i]
+	}
+
 	likes, err := api.store.GetUserLikes(user.Id.String())
 	if err != nil {
 		c.String(500, err.Error())
 		return
 	}
 
+	for i, j := 0, len(likes)-1; i < j; i, j = i+1, j-1 {
+		likes[i], likes[j] = likes[j], likes[i]
+	}
+
 	profile, err := api.store.GetProfileByUser(user.Id.String())
+	if err != nil {
+		c.Redirect(302, "/customization")
+		return
+	}
+
+	follows, err := api.store.DoesUserFollow(loggedUserId.(string), user.Id.String())
 	if err != nil {
 		c.String(500, err.Error())
 		return
 	}
 
-	templates.AppLayout(fmt.Sprintf("%s's Profile", user.Username), loggedUser.Username, templates.ProfilePage(likes, posts, username, profile)).Render(c.Request.Context(), c.Writer)
+	templates.AppLayout(fmt.Sprintf("%s's Profile", profile.FullName), loggedUser.Username, templates.ProfilePage(likes, posts, username, profile, follows)).Render(c.Request.Context(), c.Writer)
 }
 
 func (api *ApiServer) handleUserBanner(c *gin.Context) {
@@ -313,4 +327,51 @@ func (api *ApiServer) handleUserBanner(c *gin.Context) {
 	}
 
 	c.Data(200, "image/png", buff.Bytes())
+}
+
+func (api *ApiServer) handleFollowUser(c *gin.Context) {
+	userId, ok := c.Get("user_id")
+	if !ok {
+		c.String(500, "No user id")
+		return
+	}
+
+	followedUserId := c.PostForm("followe")
+	fmt.Println(followedUserId)
+
+	err := api.store.CreateFollow(userId.(string), followedUserId)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	c.String(200, `
+<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+	hx-post="/unfollowUser" hx-target="#follow" hx-swap="outerHTML">
+Unfollow
+</button>`)
+}
+
+func (api *ApiServer) handleFeedRecommendation(c *gin.Context) {
+	userId, ok := c.GetQuery("user_id")
+	if !ok {
+		c.String(500, "No user id")
+		return
+	}
+
+	user, err := api.store.GetUserById(userId)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+	following, err := api.store.GetUserFollowing(userId)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"user":      user,
+		"following": following,
+	})
 }

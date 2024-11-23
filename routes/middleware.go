@@ -1,6 +1,8 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func (api *ApiServer) authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {

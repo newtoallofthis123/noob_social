@@ -60,6 +60,13 @@ func createTables(refresh bool, db *PqInstance) error {
 		post_id TEXT REFERENCES posts(id),
 		created_at TIMESTAMP NOT NULL
 	);
+
+	CREATE TABLE IF NOT EXISTS follows (
+		id UUID PRIMARY KEY,
+		user_id UUID REFERENCES users(id),
+		following_id UUID REFERENCES users(id),
+		created_at TIMESTAMP NOT NULL
+	);
 	`
 
 	if refresh {
@@ -70,6 +77,8 @@ func createTables(refresh bool, db *PqInstance) error {
 		DROP TABLE IF EXISTS users;
 		DROP TABLE IF EXISTS otp;
 		DROP TABLE IF EXISTS sessions;
+		DROP TABLE IF EXISTS profile;
+		DROP TABLE IF EXISTS follows;
 		` + query
 	}
 

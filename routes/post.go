@@ -12,6 +12,7 @@ import (
 
 func (api *ApiServer) handleCreatePost(c *gin.Context) {
 	userID, ok := c.Get("user_id")
+	fmt.Println(userID)
 	if !ok {
 		c.Redirect(302, "/login")
 		return

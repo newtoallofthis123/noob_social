@@ -270,3 +270,57 @@ func (pq *PqInstance) GetUserLikes(userId string) ([]views.Like, error) {
 
 	return toReturn, nil
 }
+
+func (pq *PqInstance) GetUserFollowing(userId string) ([]views.User, error) {
+	query := pq.Builder.Select("users.id", "users.username", "users.email", "users.created_at").From("users").Join("follows ON users.id = follows.following_id").Where(squirrel.Eq{"follows.user_id": userId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	rows, err := query.Query()
+	if err != nil {
+		return []views.User{}, err
+	}
+
+	toReturn := []views.User{}
+
+	for rows.Next() {
+		user := views.User{}
+
+		userId := ""
+
+		err := rows.Scan(&userId, &user.Username, &user.Email, &user.CreatedAt)
+		if err != nil {
+			return []views.User{}, err
+		}
+
+		user.Id, err = uuid.Parse(userId)
+		if err != nil {
+			return []views.User{}, err
+		}
+
+		toReturn = append(toReturn, user)
+	}
+
+	return toReturn, nil
+}
+
+func (pq *PqInstance) CreateFollow(userId, followId string) error {
+	query := pq.Builder.Insert("follows").Columns("id", "user_id", "following_id", "created_at").Values(uuid.New(), userId, followId, carbon.Now()).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	_, err := query.Exec()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pq *PqInstance) DoesUserFollow(userId, followId string) (bool, error) {
+	query := pq.Builder.Select("*").From("follows").Where(squirrel.Eq{"user_id": userId, "following_id": followId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	rows, err := query.Query()
+	if err != nil {
+		return false, err
+	}
+
+	return rows.Next(), nil
+}

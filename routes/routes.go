@@ -63,6 +63,8 @@ func (api *ApiServer) Start() error {
 	// Some JSON routes for testing
 	r.GET("/json/:username/posts", api.handleJsonUserPosts)
 
+	r.GET("/feed", api.handleFeedRecommendation)
+
 	// authenticated routes
 	auth := r.Group("/")
 	auth.Use(api.authMiddleware())
@@ -75,6 +77,7 @@ func (api *ApiServer) Start() error {
 
 	auth.GET("/:username/post/:iden", api.handlePostPage)
 	auth.GET("/:username", api.handleProfilePage)
+	auth.POST("/followUser", api.handleFollowUser)
 
 	err := r.Run(api.listenAddr)
 	return err
