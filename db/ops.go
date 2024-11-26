@@ -67,6 +67,19 @@ func createTables(refresh bool, db *PqInstance) error {
 		following_id UUID REFERENCES users(id),
 		created_at TIMESTAMP NOT NULL
 	);
+
+	CREATE TABLE IF NOT EXISTS tags (
+		id UUID PRIMARY KEY,
+		tag VARCHAR(255) UNIQUE NOT NULL,
+		created_at TIMESTAMP NOT NULL
+	);
+
+	CREATE TABLE IF NOT EXISTS content_tags (
+		id UUID PRIMARY KEY,
+		content_id UUID REFERENCES contents(id),
+		tag_id UUID REFERENCES tags(id),
+		created_at TIMESTAMP NOT NULL
+	)
 	`
 
 	if refresh {

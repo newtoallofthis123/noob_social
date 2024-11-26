@@ -5,7 +5,8 @@ import (
 	"github.com/newtoallofthis123/noob_social/views"
 )
 
-templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, profile views.Profile, follows bool) {
+templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, profile views.Profile, follows bool,
+	admin bool) {
 	<div>
 		<div>
 			<img src={ "/banner/" + username } alt=""/>
@@ -23,31 +24,34 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
 			</div>
 			<div class="w-3/5 flex  justify-center">
 				<div class="px-3 pt-2 pb-1">
-					<form>
-						<input type="hidden" name="followe" value={ profile.UserId }/>
-						if follows {
-							<div id="follow">
+					if admin {
+					} else {
+						<form>
+							<input type="hidden" name="followe" value={ profile.UserId }/>
+							if follows {
+								<div id="follow">
+									<button
+										class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+										hx-post="/unfollowUser"
+										hx-target="#follow"
+										hx-swap="outerHTML"
+									>
+										Unfollow
+									</button>
+								</div>
+							} else {
 								<button
+									id="follow"
 									class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-									hx-post="/unfollowUser"
+									hx-post="/followUser"
 									hx-target="#follow"
 									hx-swap="outerHTML"
 								>
-									Unfollow
+									Follow
 								</button>
-							</div>
-						} else {
-							<button
-								id="follow"
-								class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-								hx-post="/followUser"
-								hx-target="#follow"
-								hx-swap="outerHTML"
-							>
-								Follow
-							</button>
-						}
-					</form>
+							}
+						</form>
+					}
 				</div>
 			</div>
 		</div>
@@ -57,10 +61,10 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
 		</div>
 		<div id="posts">
 			for _, post := range posts {
-				if post.Post.CommentTo == "" {
-					<div class="w-full dark:bg-neutral-800 bg-neutral-100 border-t-2 border-neutral-800 dark:border-0 pt-2 pb-1">
-						<div class="px-4">
-							<div class="w-[60%] pb-2">
+			if post.Post.CommentTo == "" {
+					<div class="flex w-full dark:bg-neutral-800 bg-neutral-100 border-t-2 border-neutral-800 dark:border-0 pt-2 pb-1">
+						<div class="w-[95%] px-4">
+							<div class="pb-2">
 								@UserInfo(username, profile)
 							</div>
 							<div class="postBody text-md px-1" id={ "body_" + post.Post.Id }></div>
@@ -91,6 +95,9 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
 								<i class="bi bi-arrow-right"></i>
 							</a>
 						</div>
+                        <div class="w-[5%]">
+                             <i class="bi bi-three-dots"></i>
+                        </div>
 					</div>
 				}
 			}
@@ -98,8 +105,8 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
 		<div id="replies" style="display: none;">
 			for _, post := range posts {
 				if post.Post.CommentTo != "" {
-					<div class="w-full dark:bg-neutral-800 bg-neutral-100 border-t-2 border-neutral-800 dark:border-0 pt-2 pb-1">
-						<div class="px-4">
+					<div class="flex w-full dark:bg-neutral-800 bg-neutral-100 border-t-2 border-neutral-800 dark:border-0 pt-2 pb-1">
+						<div class="w-[95%] px-4">
 							<div class="pb-3">
 								<i class="bi bi-arrow-down"></i> Reply for
 								<a
@@ -140,6 +147,9 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
 								<i class="bi bi-arrow-right"></i>
 							</a>
 						</div>
+                        <div class="w-[5%]">
+                             <i class="bi bi-three-dots"></i>
+                        </div>
 					</div>
 				}
 			}

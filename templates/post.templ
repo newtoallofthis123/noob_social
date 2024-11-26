@@ -1,10 +1,13 @@
 package templates
 
-import "github.com/newtoallofthis123/noob_social/views"
-import "fmt"
-import "github.com/newtoallofthis123/noob_social/utils"
+import (
+"fmt"
+"github.com/newtoallofthis123/noob_social/utils"
+"github.com/newtoallofthis123/noob_social/views"
+)
 
-templ PostPage(isComment, isLiked bool, username string, post views.Post, content views.Content, profile views.Profile, comments []views.Comment, prev string) {
+templ PostPage(isComment, isLiked bool, username string, post views.Post, content views.Content, profile views.Profile,
+comments []views.Comment, prev string) {
 if !isComment {
 <div class="flex flex-row justify-between items-center pb-2 px-3 dark:text-gray-300 font-semibold">
     <div>
@@ -13,25 +16,31 @@ if !isComment {
 </div>
 }
 <div class="w-full dark:bg-neutral-800 bg-neutral-100 border-t-2 border-neutral-800 dark:border-0 pt-2 pb-1">
-    <div class="px-4">
-        <div class="w-[60%] pb-2">
-            @UserInfo(username, profile)
-        </div>
-        <div class="postBody text-md px-1" id={ "body_" + post.Id }></div>
-        if content.Image != "" {
-        <a data-fancybox={ "gallery" + post.Id } href={ templ.SafeURL(utils.STATICPATH + content.Image) } class="py-2">
-            <img class="py-1" src={ utils.STATICPATH + content.Image } alt={ content.Body } />
-        </a>
-        }
-        <form class="hidden" hx-post="/md" hx-target={ "#body_" + post.Id } hx-trigger="load">
-            <input type="hidden" name="body" value={ content.Body } />
-            <p id="rawdate">{ post.CreatedAt }</p>
-        </form>
-        <div class="pt-3">
-            <div>
-                <p class="dark:text-neutral-400" id="date"></p>
+    <div class="flex">
+        <div class="w-[95%] px-4">
+            <div class="w-full pb-2">
+                @UserInfo(username, profile)
             </div>
-            <div></div>
+            <div class="postBody text-md px-1" id={ "body_" + post.Id }></div>
+            if content.Image != "" {
+            <a data-fancybox={ "gallery" + post.Id } href={ templ.SafeURL(utils.STATICPATH + content.Image) }
+                class="py-2">
+                <img class="py-1" src={ utils.STATICPATH + content.Image } alt={ content.Body } />
+            </a>
+            }
+            <form class="hidden" hx-post="/md" hx-target={ "#body_" + post.Id } hx-trigger="load">
+                <input type="hidden" name="body" value={ content.Body } />
+                <p id="rawdate">{ post.CreatedAt }</p>
+            </form>
+            <div class="pt-3">
+                <div>
+                    <p class="dark:text-neutral-400" id="date"></p>
+                </div>
+                <div></div>
+            </div>
+        </div>
+        <div class="w-[5%]">
+            <i class="bi bi-three-dots"></i>
         </div>
     </div>
     if !isComment {
@@ -108,8 +117,9 @@ templ Comments(parentId string, username string, comments []views.Comment) {
         @PostPage(true, false, comment.Username, comment.Post, comment.Content, comment.Profile, nil, comment.Post.Id)
         <a hx-boost={ string(templ.SafeURL("/" + comment.Username + "/post/" + comment.Post.Id)) } href={
             templ.SafeURL("/" + comment.Username + "/post/" + comment.Post.Id + "?back=" + username + "/post/" +
-            parentId) } class="text-sm dark:text-neutral-400 pl-4 underline">View Comments <i
-                class="bi bi-arrow-right"></i> </a>
+            parentId) } class="text-sm dark:text-neutral-400 pl-4 underline">
+            View Comments <i class="bi bi-arrow-right"></i>
+        </a>
     </div>
     }
 </div>

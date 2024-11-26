@@ -295,7 +295,12 @@ func (api *ApiServer) handleProfilePage(c *gin.Context) {
 		return
 	}
 
-	templates.AppLayout(fmt.Sprintf("%s's Profile", profile.FullName), loggedUser.Username, templates.ProfilePage(likes, posts, username, profile, follows)).Render(c.Request.Context(), c.Writer)
+	admin := false
+	if loggedUser.Id == user.Id {
+		admin = true
+	}
+
+	templates.AppLayout(fmt.Sprintf("%s's Profile", profile.FullName), loggedUser.Username, templates.ProfilePage(likes, posts, username, profile, follows, admin)).Render(c.Request.Context(), c.Writer)
 }
 
 func (api *ApiServer) handleUserBanner(c *gin.Context) {
