@@ -41,6 +41,7 @@ type Store interface {
 	GetUserLikes(userId string) ([]views.Like, error)
 
 	CreateFollow(userId, followId string) error
+	DeleteFollow(userId, followId string) error
 	GetUserFollowing(userId string) ([]views.User, error)
 	DoesUserFollow(userId, followId string) (bool, error)
 }

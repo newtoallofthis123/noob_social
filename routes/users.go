@@ -352,6 +352,29 @@ Unfollow
 </button>`)
 }
 
+func (api *ApiServer) handleUnfollowUser(c *gin.Context) {
+	userId, ok := c.Get("user_id")
+	if !ok {
+		c.String(500, "No user id")
+		return
+	}
+
+	followedUserId := c.PostForm("followe")
+	fmt.Println(followedUserId)
+
+	err := api.store.DeleteFollow(userId.(string), followedUserId)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	c.String(200, `
+<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+	hx-post="/followUser" hx-target="#follow" hx-swap="outerHTML">
+Follow
+</button>`)
+}
+
 func (api *ApiServer) handleFeedRecommendation(c *gin.Context) {
 	userId, ok := c.GetQuery("user_id")
 	if !ok {

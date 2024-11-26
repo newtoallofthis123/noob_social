@@ -78,6 +78,7 @@ func (api *ApiServer) Start() error {
 	auth.GET("/:username/post/:iden", api.handlePostPage)
 	auth.GET("/:username", api.handleProfilePage)
 	auth.POST("/followUser", api.handleFollowUser)
+	auth.POST("/unfollowUser", api.handleUnfollowUser)
 
 	err := r.Run(api.listenAddr)
 	return err

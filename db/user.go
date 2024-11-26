@@ -314,6 +314,18 @@ func (pq *PqInstance) CreateFollow(userId, followId string) error {
 	return nil
 }
 
+func (pq *PqInstance) DeleteFollow(userId, followId string) error {
+	query := pq.Builder.Delete("follows").Where(squirrel.Eq{"user_id": userId, "following_id": followId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	_, err := query.Exec()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (pq *PqInstance) DoesUserFollow(userId, followId string) (bool, error) {
 	query := pq.Builder.Select("*").From("follows").Where(squirrel.Eq{"user_id": userId, "following_id": followId}).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
 
