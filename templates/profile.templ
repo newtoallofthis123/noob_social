@@ -88,7 +88,7 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
 								</div>
 							</div>
 							<a
-								href={ templ.SafeURL("/" + username + "/post/" + post.Post.Id + "?back=" + username) }
+								href={ templ.SafeURL("/go_post/" + post.Post.Id + "?back=" + username) }
 								class="text-sm dark:text-neutral-400 pl-0.5 underline"
 							>
 								View Comments
@@ -110,7 +110,7 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
 							<div class="pb-3">
 								<i class="bi bi-arrow-down"></i> Reply for
 								<a
-									href={ templ.SafeURL("/" + username + "/post/" + post.Post.CommentTo + "?back=" + username) }
+									href={ templ.SafeURL("/go_post/" + post.Post.CommentTo + "?back=" + username) }
 									class="underline"
 								>
 									{ post.Post.CommentTo }
@@ -140,7 +140,7 @@ templ ProfilePage(likes []views.Like, posts []views.FullPost, username string, p
 								</div>
 							</div>
 							<a
-								href={ templ.SafeURL("/" + username + "/post/" + post.Post.Id + "?back=" + username) }
+								href={ templ.SafeURL("/go_post/" + post.Post.Id + "?back=" + username) }
 								class="text-sm dark:text-neutral-400 pl-0.5 underline"
 							>
 								View Comments

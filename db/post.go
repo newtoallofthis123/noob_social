@@ -165,3 +165,14 @@ func (pq *PqInstance) GetComments(postId string) ([]views.Comment, error) {
 
 	return comments, nil
 }
+
+func (pq *PqInstance) AddTag(tag string) error {
+	query := pq.Builder.Insert("tags").Columns("id", "tag", "created_at").Values(uuid.New(), tag, carbon.Now(carbon.Local)).RunWith(pq.Db).PlaceholderFormat(squirrel.Dollar)
+
+	_, err := query.Exec()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

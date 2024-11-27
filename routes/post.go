@@ -89,6 +89,24 @@ func (api *ApiServer) handleCreatePost(c *gin.Context) {
 	}
 }
 
+func (api *ApiServer) handleGoPost(c *gin.Context) {
+	postIden := c.Params.ByName("iden")
+
+	post, err := api.store.GetPost(postIden)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	user, err := api.store.GetUserById(post.Author)
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+
+	c.Redirect(302, fmt.Sprintf("/%s/post/%s", user.Username, postIden))
+}
+
 func (api *ApiServer) handlePostPage(c *gin.Context) {
 	postIden := c.Params.ByName("iden")
 	username := c.Params.ByName("username")

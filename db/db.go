@@ -44,6 +44,8 @@ type Store interface {
 	DeleteFollow(userId, followId string) error
 	GetUserFollowing(userId string) ([]views.User, error)
 	DoesUserFollow(userId, followId string) (bool, error)
+
+	AddTag(tag string) error
 }
 
 type PqInstance struct {

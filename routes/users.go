@@ -259,8 +259,11 @@ func (api *ApiServer) handleProfilePage(c *gin.Context) {
 	username := c.Param("username")
 	user, err := api.store.GetUserByUsername(username)
 	if err != nil {
-		c.String(500, err.Error())
-		return
+		user, err = api.store.GetUserById(username)
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
 	}
 
 	posts, err := api.store.GetPostsByUser(user.Id.String())
@@ -300,7 +303,7 @@ func (api *ApiServer) handleProfilePage(c *gin.Context) {
 		admin = true
 	}
 
-	templates.AppLayout(fmt.Sprintf("%s's Profile", profile.FullName), loggedUser.Username, templates.ProfilePage(likes, posts, username, profile, follows, admin)).Render(c.Request.Context(), c.Writer)
+	templates.AppLayout(fmt.Sprintf("%s's Profile", profile.FullName), loggedUser.Username, templates.ProfilePage(likes, posts, user.Username, profile, follows, admin)).Render(c.Request.Context(), c.Writer)
 }
 
 func (api *ApiServer) handleUserBanner(c *gin.Context) {

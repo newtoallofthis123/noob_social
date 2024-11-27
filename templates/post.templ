@@ -11,7 +11,13 @@ comments []views.Comment, prev string) {
 if !isComment {
 <div class="flex flex-row justify-between items-center pb-2 px-3 dark:text-gray-300 font-semibold">
     <div>
+        if prev != "/" {
         <a href={ "/" + templ.SafeURL(prev) }><i class="bi bi-arrow-left"></i> Back</a>
+        } else {
+        <a class="cursor-pointer" onclick={ templ.ComponentScript{Call: "goToPrev()" } }>
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+        }
     </div>
 </div>
 }
@@ -106,6 +112,11 @@ if !isComment {
             document.getElementById("replyingTo").innerText = "@" + username
             commentToggled = true
         }
+    }
+
+    function goToPrev() {
+        window.history.back()
+        console.log("Hello World")
     }
 </script>
 }

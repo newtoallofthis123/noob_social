@@ -76,6 +76,7 @@ func (api *ApiServer) Start() error {
 	auth.POST("/unlikePost", api.handleUserUnlike)
 
 	auth.GET("/:username/post/:iden", api.handlePostPage)
+	auth.GET("/go_post/:iden", api.handleGoPost)
 	auth.GET("/:username", api.handleProfilePage)
 	auth.POST("/followUser", api.handleFollowUser)
 	auth.POST("/unfollowUser", api.handleUnfollowUser)
